@@ -142,6 +142,10 @@ depend: ${ALL_CSRCS}
 	ed - Makefile < eddep
 	rm -f eddep makedep
 
+# for flymake's benefit.  only works with gcc.
+check-syntax:
+	gcc -Wall -fsyntax-only $(CHK_SOURCES)	
+
 .SUFFIXES: .c .o .i .s
 .c.o:
 	${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
