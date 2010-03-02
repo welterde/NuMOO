@@ -172,10 +172,6 @@ bf_log_cache_stats(Var arglist, Byte next, void *vdata, Objid progr)
 }
 #endif
 
-#ifdef EXPAT_XML
-extern void register_xml(void);
-#endif
-
 void
 register_extensions()
 {
@@ -186,9 +182,6 @@ register_extensions()
 #ifdef STUPID_VERB_CACHE
     register_function("log_cache_stats", 0, 0, bf_log_cache_stats);
     register_function("verb_cache_stats", 0, 0, bf_verb_cache_stats);
-#endif
-#ifdef EXPAT_XML
-    register_xml();
 #endif
 }
 

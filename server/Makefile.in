@@ -13,20 +13,13 @@
 #   Palo Alto, CA 94304
 #   Pavel@Xerox.Com
 
-# 
-# with autoconf2 I'll go edit it to support --with-expat=
-# Until then, set this to where you unpacked and compiled expat
-#
-EXPAT = ./expat
-
-EXPAT_OBJS = $(EXPAT)/xmltok/*.o $(EXPAT)/xmlparse/*.o 
 
 CC = @CC@
-LIBS = ucd/libucd.a @LIBS@ $(EXPAT_OBJS)
+LIBS = ucd/libucd.a @LIBS@ 
 YACC = @YACC@
 
 CFLAGS = @CFLAGS@
-CPPFLAGS = -DEXPAT_XML -I. -Iucd -I$(EXPAT)/xmlparse @CPPFLAGS@
+CPPFLAGS = -I. -Iucd @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 
 YFLAGS = -d
@@ -39,7 +32,7 @@ CSRCS = ast.c code_gen.c db_file.c db_io.c db_objects.c db_properties.c \
 	net_proto.c numbers.c objects.c parse_cmd.c pattern.c program.c \
 	property.c quota.c ref_count.c server.c storage.c \
 	streams.c str_intern.c sym_table.c tasks.c timers.c unparse.c \
-	utf.c utf-ctype.c utils.c verbs.c version.c waif.c ext-xml.c
+	utf.c utf-ctype.c utils.c verbs.c version.c waif.c 
 
 OPT_NET_SRCS = net_single.c net_multi.c \
 	net_mp_selct.c net_mp_poll.c net_mp_fake.c \
@@ -86,7 +79,6 @@ OBJS = $(COBJS) $(YOBJS) @OBJS@
 
 all:
 	cd ucd && $(MAKE) all
-	cd $(EXPAT) && $(MAKE)
 	$(MAKE) moo
 
 moo:	$(OBJS)
@@ -153,7 +145,6 @@ clean:
 
 distclean:	clean
 	cd ucd && $(MAKE) clean
-	$(MAKE) -C $(EXPAT) $@
 	rm -f config.h Makefile config.status
 
 depend: ${ALL_CSRCS}
