@@ -66,10 +66,10 @@ ALL_CSRCS = $(CSRCS) $(OPT_CSRCS) $(CLIENT_SRCS)
 
 SRCS = $(ALL_CSRCS) keywords.gperf $(YSRCS) $(HDRS) $(SYSHDRS)
 
-DISTFILES = $(SRCS) Makefile.in restart restart.sh \
+DISTFILES = $(SRCS) restart \
 	Minimal.db README.Minimal \
-	ChangeLog.txt README configure.in configure config.h.in \
-	MOOCodeSequences.txt AddingNewMOOTypes.txt pgperf aclocal.m4
+	ChangeLog.txt README \
+	MOOCodeSequences.txt AddingNewMOOTypes.txt 
 
 COBJS = $(CSRCS:.c=.o)
 
@@ -99,20 +99,6 @@ pcre/.libs/libpcre.a:
 # This rule gets around some "make"s' desire to `derive' it from `restart.sh'.
 restart:
 	touch restart
-
-configure: configure.in
-	autoconf
-
-config.status: configure
-	./config.status --recheck || ./configure --no-create
-
-Makefile: Makefile.in config.status
-	@echo "[ $@ : $? ]"
-	./config.status
-
-config.h: config.h.in config.status
-	@echo "[ $@ : $? ]"
-	./config.status
 
 y.tab.h: parser.o
 	touch y.tab.h
@@ -145,7 +131,6 @@ clean:
 
 distclean:	clean
 	cd ucd && $(MAKE) clean
-	rm -f config.h Makefile config.status
 
 depend: ${ALL_CSRCS}
 	rm -f eddep makedep
@@ -153,8 +138,8 @@ depend: ${ALL_CSRCS}
 	echo '/^# DO NOT DELETE THIS LINE/+1,$$d' >eddep
 	echo '$$r makedep' >>eddep
 	echo 'w' >>eddep
-	cp Makefile.in Makefile.in.bak
-	ed - Makefile.in < eddep
+	cp Makefile Makefile.bak
+	ed - Makefile < eddep
 	rm -f eddep makedep
 
 .SUFFIXES: .c .o .i .s
