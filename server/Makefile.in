@@ -150,13 +150,11 @@ tags:
 
 clean:
 	rm -f $(OBJS) $(OPT_NET_OBJS) core parser.c y.tab.c y.tab.h y.output makedep eddep
-	cd ucd && $(MAKE) clean
-	$(MAKE) -C $(EXPAT) $@
-	test ! -e pcre/Makefile || $(MAKE) -C pcre $@
 
 distclean:	clean
+	cd ucd && $(MAKE) clean
+	$(MAKE) -C $(EXPAT) $@
 	rm -f config.h Makefile config.status
-	test ! -e pcre/Makefile || $(MAKE) -C pcre $@
 
 depend: ${ALL_CSRCS}
 	rm -f eddep makedep
