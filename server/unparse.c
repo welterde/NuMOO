@@ -16,7 +16,7 @@
  *****************************************************************************/
 
 #include "utf-ctype.h"
-#include "my-stdio.h"
+#include <stdio.h>
 
 #include "ast.h"
 #include "config.h"

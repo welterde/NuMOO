@@ -22,10 +22,10 @@
 #include "config.h"
 #include <ctype.h>
 #include <float.h>
-#include "my-stdarg.h"
-#include "my-stdio.h"
-#include "my-stdlib.h"
-#include "my-string.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "db_io.h"
 #include "db_private.h"

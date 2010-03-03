@@ -15,8 +15,8 @@
     Pavel@Xerox.Com
  *****************************************************************************/
 
-#include "my-string.h"
-#include "my-time.h"
+#include <string.h>
+#include <time.h>
 
 #include "config.h"
 #include "db.h"

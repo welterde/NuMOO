@@ -15,7 +15,7 @@
     Pavel@Xerox.Com
  *****************************************************************************/
 
-#include "my-stdarg.h"
+#include <stdarg.h>
 
 #include "bf_register.h"
 #include "config.h"
@@ -589,7 +589,7 @@ char rcsid_functions[] = "$Id$";
  * Made it entirely clear how to add new MOO built-in functions to the server.
  *
  * Revision 1.7  1992/08/14  00:40:31  pavel
- * Added missing #include "my-stdarg.h"...
+ * Added missing #include <stdarg.h>...
  *
  * Revision 1.6  1992/08/14  00:01:03  pavel
  * Converted to a typedef of `var_type' = `enum var_type'.

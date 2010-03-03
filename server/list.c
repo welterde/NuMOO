@@ -16,8 +16,7 @@
  *****************************************************************************/
 
 #include "utf-ctype.h"
-#include "my-string.h"
-#include "my-math.h"
+#include <string.h>
 
 #include "bf_register.h"
 #include "config.h"
@@ -26,6 +25,7 @@
 #include "list.h"
 #include "log.h"
 #include "md5.h"
+#include "numbers.h"
 #include "options.h"
 #include "pattern.h"
 #include "random.h"

@@ -25,16 +25,16 @@
 
 #if NETWORK_PROTOCOL == NP_TCP	/* Skip almost entire file otherwise... */
 
-#include "my-signal.h"
-#include "my-stdlib.h"
-#include "my-unistd.h"
-#include "my-inet.h"		/* inet_addr() */
-#include "my-in.h"		/* struct sockaddr_in, INADDR_ANY, htons(),
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>		/* inet_addr() */
+#include <netinet/in.h>		/* struct sockaddr_in, INADDR_ANY, htons(),
 				   * htonl(), ntohl(), struct in_addr */
 #include <netdb.h>		/* struct hostent, gethostbyaddr() */
-#include "my-socket.h"		/* AF_INET */
-#include "my-wait.h"
-#include "my-string.h"
+#include <sys/socket.h>		/* AF_INET */
+#include <sys/wait.h>
+#include <string.h>
 #include <errno.h>
 
 #include "config.h"
@@ -401,7 +401,7 @@ char rcsid_name_lookup[] = "$Id$";
  * Release 1.8.0beta1.
  *
  * Revision 2.1  1995/12/11  08:11:45  pavel
- * Added missing #include of "my-stdlib.h".  Release 1.8.0alpha2.
+ * Added missing #include of <stdlib.h>.  Release 1.8.0alpha2.
  *
  * Revision 2.0  1995/11/30  04:28:09  pavel
  * New baseline version, corresponding to release 1.8.0alpha1.

@@ -30,7 +30,7 @@ char rcsid_waif[] = "$Id$";
 #include "db_private.h"
 #include "db_io.h"
 #include "waif.h"
-#include "my-string.h"
+#include <string.h>
 
 static unsigned long waif_count = 0;
 

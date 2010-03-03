@@ -18,7 +18,7 @@
 #ifndef Structures_h
 #define Structures_h 1
 
-#include "my-stdio.h"
+#include <stdio.h>
 #include "options.h"
 #include "config.h"
 

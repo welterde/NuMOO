@@ -19,11 +19,11 @@
  * Routines for initializing, loading, dumping, and shutting down the database
  *****************************************************************************/
 
-#include "my-stat.h"
-#include "my-unistd.h"
-#include "my-stdio.h"
-#include "my-stdlib.h"
-#include "my-string.h"
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "db.h"
@@ -803,7 +803,7 @@ char rcsid_db_file[] = "$Id$";
  * Release 1.8.0alpha3.
  *
  * Revision 2.1  1995/12/11  07:55:01  pavel
- * Added missing #include of "my-stdlib.h".  Slightly improved clarity of the
+ * Added missing #include of <stdlib.h>.  Slightly improved clarity of the
  * progress messages during DB loading.
  *
  * Release 1.8.0alpha2.

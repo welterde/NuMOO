@@ -17,6 +17,17 @@
 
 #include "structures.h"
 
+#include <float.h>
+#include <math.h>
+#include <limits.h>
+
+#define IS_REAL(x)	(-HUGE_VAL < (x) && (x) < HUGE_VAL)
+
+#ifndef DECIMAL_DIG
+# define DECIMAL_DIG (DBL_DIG+4)
+#endif
+
+
 extern Var new_float(double);
 extern enum error become_integer(Var, Num *, int);
 

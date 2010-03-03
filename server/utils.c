@@ -16,8 +16,8 @@
  *****************************************************************************/
 
 #include "utf-ctype.h"
-#include "my-stdio.h"
-#include "my-string.h"
+#include <stdio.h>
+#include <string.h>
 
 #include "config.h"
 #include "db.h"

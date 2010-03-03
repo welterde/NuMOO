@@ -17,14 +17,14 @@
 
 #include <limits.h>
 #include <errno.h>
-#include "my-math.h"
-#include "my-stdlib.h"
-#include "my-string.h"
-#include "my-time.h"
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "config.h"
 #include "functions.h"
 #include "log.h"
+#include "numbers.h"
 #include "random.h"
 #include "storage.h"
 #include "structures.h"
