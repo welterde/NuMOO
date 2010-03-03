@@ -18,9 +18,14 @@ CC = gcc -g
 LIBS = ucd/libucd.a -lpcre  -lm -lcrypt 
 YACC = bison -y
 
-CFLAGS = -g -O2 -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wwrite-strings -pipe -O3
+# These are pretty insane.
+# CFLAGS = -g -O3 -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wwrite-strings
+
+# No optimization while we're still in development
+CFLAGS = -g -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
+
 CPPFLAGS = -I. -Iucd 
-LDFLAGS = 
+LDFLAGS  = 
 
 YFLAGS = -d
 COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) -c
@@ -78,14 +83,8 @@ all:
 moo:	$(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
 
-pure_moo: moo
-	purify $(CC) $(CFLAGS) $(OBJS) $(LIBRARIES) -o $@
-
 client_bsd: client_bsd.o
 	$(CC) $(CFLAGS) client_bsd.o $(LIBRARIES) -o $@
-
-pcre/.libs/libpcre.a:
-	$(MAKE) -C pcre libpcre.la
 
 # This rule gets around some "make"s' desire to `derive' it from `restart.sh'.
 restart:
@@ -98,24 +97,6 @@ keywords.c: keywords.gperf
 	gperf -CtT --ignore-case keywords.gperf \
 		| sed -e 's/#include <ctype.h>/#include "utf-ctype.h"/' \
 		> keywords.c
-
-dist.tar.Z:	$(DISTFILES)
-	rm -f version_number
-	grep "server_version = " version.c \
-		| sed -e 's/^.* = "//' -e 's/";//' > version_number
-	rm -fr MOO-`cat version_number`
-	mkdir MOO-`cat version_number`
-	chmod 755 MOO-`cat version_number`
-	cp -pr $(DISTFILES) MOO-`cat version_number`
-	chmod u+w MOO-`cat version_number`/*
-	tar cvf - MOO-`cat version_number` | compress -c > dist.tar.Z.NEW
-	mv dist.tar.Z.NEW dist.tar.Z
-	rm -f LambdaMOO-`cat version_number`.tar.Z
-	ln dist.tar.Z LambdaMOO-`cat version_number`.tar.Z
-	rm -fr MOO-`cat version_number` version_number
-
-tags:
-	etags -t $(SRCS)
 
 clean:
 	rm -f $(OBJS) $(OPT_NET_OBJS) core parser.c y.tab.c y.tab.h y.output makedep eddep
