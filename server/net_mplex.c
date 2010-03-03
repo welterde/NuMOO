@@ -21,14 +21,6 @@
 #    include "net_mp_selct.c"
 #  endif
 
-#  if MPLEX_STYLE == MP_POLL
-#    include "net_mp_poll.c"
-#  endif
-
-#  if MPLEX_STYLE == MP_FAKE
-#    include "net_mp_fake.c"
-#  endif
-
 char rcsid_net_mplex[] = "$Id$";
 
 /* 

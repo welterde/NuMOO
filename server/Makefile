@@ -34,10 +34,8 @@ CSRCS = ast.c code_gen.c db_file.c db_io.c db_objects.c db_properties.c \
 	streams.c str_intern.c sym_table.c tasks.c timers.c unparse.c \
 	utf.c utf-ctype.c utils.c verbs.c version.c waif.c 
 
-OPT_NET_SRCS = net_single.c net_multi.c \
-	net_mp_selct.c net_mp_poll.c net_mp_fake.c \
-	net_tcp.c \
-	net_bsd_tcp.c net_bsd_lcl.c net_sysv_tcp.c net_sysv_lcl.c
+OPT_NET_SRCS = net_single.c net_multi.c net_mp_selct.c \
+	net_tcp.c net_bsd_tcp.c net_bsd_lcl.c
 
 OPT_NET_OBJS = $(OPT_NET_SRCS:.c=.o)
 
@@ -56,7 +54,7 @@ HDRS = ast.h bf_register.h code_gen.h db.h db_io.h db_private.h		\
 	utf-ctype.h utils.h verbs.h version.h
 
 
-CLIENT_SRCS = client_bsd.c client_sysv.c
+CLIENT_SRCS = client_bsd.c
 
 ALL_CSRCS = $(CSRCS) $(OPT_CSRCS) $(CLIENT_SRCS)
 
@@ -85,9 +83,6 @@ pure_moo: moo
 
 client_bsd: client_bsd.o
 	$(CC) $(CFLAGS) client_bsd.o $(LIBRARIES) -o $@
-
-client_sysv: client_sysv.o
-	$(CC) $(CFLAGS) client_sysv.o $(LIBRARIES) -o $@
 
 pcre/.libs/libpcre.a:
 	$(MAKE) -C pcre libpcre.la
@@ -320,8 +315,8 @@ parser.o:	utf-ctype.h my-math.h my-stdlib.h my-string.h \
 
 # Must do these specially, since they depend upon C preprocessor options.
 network.o: 	net_single.o net_multi.o
-net_proto.o:	net_bsd_tcp.o net_bsd_lcl.o net_sysv_tcp.o net_sysv_lcl.o
-net_mplex.o:	net_mp_selct.o net_mp_poll.o net_mp_fake.o
+net_proto.o:	net_bsd_tcp.o net_bsd_lcl.o 
+net_mplex.o:	net_mp_selct.o 
 
 $(OPT_NET_OBJS):
 	touch $@
@@ -497,8 +492,6 @@ net_multi.o: net_multi.c utf-ctype.h config.h my-fcntl.h my-ioctl.h \
   utf.h utils.h execute.h db.h program.h version.h opcode.h parse_cmd.h
 net_mp_selct.o: net_mp_selct.c my-string.h config.h my-sys-time.h \
   options.h my-types.h log.h my-stdio.h structures.h net_mplex.h
-net_mp_poll.o: net_mp_poll.c my-poll.h config.h log.h my-stdio.h \
-  structures.h net_mplex.h storage.h my-string.h ref_count.h
 net_tcp.o: net_tcp.c
 net_bsd_tcp.o: net_bsd_tcp.c my-inet.h config.h my-in.h my-types.h \
   my-socket.h my-stdlib.h my-string.h my-unistd.h list.h structures.h \
@@ -509,17 +502,5 @@ net_bsd_lcl.o: net_bsd_lcl.c my-socket.h config.h my-stdio.h my-string.h \
   my-unistd.h log.h structures.h net_proto.h options.h storage.h \
   ref_count.h utils.h execute.h db.h program.h version.h opcode.h \
   parse_cmd.h
-net_sysv_tcp.o: net_sysv_tcp.c my-inet.h config.h my-fcntl.h my-in.h \
-  my-types.h my-ioctl.h my-socket.h my-stdlib.h my-string.h my-stropts.h \
-  my-tiuser.h my-unistd.h log.h my-stdio.h structures.h name_lookup.h \
-  net_proto.h options.h server.h network.h streams.h timers.h my-time.h \
-  net_tcp.c
-net_sysv_lcl.o: net_sysv_lcl.c my-fcntl.h config.h my-stat.h my-stdio.h \
-  my-stdlib.h my-unistd.h exceptions.h list.h structures.h log.h \
-  net_multi.h net_proto.h options.h storage.h my-string.h ref_count.h \
-  streams.h utils.h execute.h db.h program.h version.h opcode.h \
-  parse_cmd.h
 client_bsd.o: client_bsd.c my-socket.h config.h my-stdio.h my-stdlib.h \
   my-string.h my-sys-time.h options.h my-types.h my-unistd.h
-client_sysv.o: client_sysv.c my-fcntl.h config.h my-signal.h my-stdio.h \
-  my-stdlib.h my-string.h my-types.h my-stat.h my-unistd.h options.h
