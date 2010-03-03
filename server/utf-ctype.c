@@ -6,7 +6,7 @@
 
 #include "config.h"
 #include "ucd.h"
-#include "my-ctype.h"
+#include "utf-ctype.h"
 
 int my_tolower(int x)
 {

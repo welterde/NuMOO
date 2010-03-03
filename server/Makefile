@@ -45,20 +45,16 @@ OPT_CSRCS = gnu-malloc.c $(OPT_NET_SRCS)
 
 YSRCS = parser.y
 
-HDRS =  ast.h bf_register.h code_gen.h db.h db_io.h db_private.h decompile.h \
-	db_tune.h \
-	disassemble.h eval_env.h eval_vm.h exceptions.h execute.h functions.h \
-	getpagesize.h keywords.h list.h log.h match.h md5.h name_lookup.h \
-	network.h net_mplex.h net_multi.h net_proto.h numbers.h opcode.h \
-	options.h parse_cmd.h parser.h pattern.h program.h quota.h random.h \
-	ref_count.h server.h storage.h streams.h structures.h  str_intern.h \
-	sym_table.h tasks.h timers.h tokens.h unparse.h utils.h verbs.h \
-	version.h
+HDRS = ast.h bf_register.h code_gen.h db.h db_io.h db_private.h		\
+	decompile.h db_tune.h disassemble.h eval_env.h eval_vm.h	\
+	exceptions.h execute.h functions.h getpagesize.h keywords.h	\
+	list.h log.h match.h md5.h name_lookup.h network.h net_mplex.h	\
+	net_multi.h net_proto.h numbers.h opcode.h options.h		\
+	parse_cmd.h parser.h pattern.h program.h quota.h random.h	\
+	ref_count.h server.h storage.h streams.h structures.h		\
+	str_intern.h sym_table.h tasks.h timers.h tokens.h unparse.h	\
+	utf-ctype.h utils.h verbs.h version.h
 
-SYSHDRS = my-ctype.h my-fcntl.h my-in.h my-inet.h my-ioctl.h my-math.h \
-	my-poll.h my-signal.h my-socket.h my-stat.h my-stdarg.h my-stdio.h \
-	my-stdlib.h my-string.h my-stropts.h my-sys-time.h my-time.h \
-	my-tiuser.h my-types.h my-unistd.h my-wait.h
 
 CLIENT_SRCS = client_bsd.c client_sysv.c
 
@@ -105,7 +101,7 @@ y.tab.h: parser.o
 
 keywords.c: keywords.gperf
 	gperf -CtT --ignore-case keywords.gperf \
-		| sed -e 's/#include <ctype.h>/#include "my-ctype.h"/' \
+		| sed -e 's/#include <ctype.h>/#include "utf-ctype.h"/' \
 		> keywords.c
 
 dist.tar.Z:	$(DISTFILES)
@@ -317,7 +313,7 @@ check-syntax:
 ###############################################################################
 
 # Have to do this one manually, since make depend cannot hack yacc files.
-parser.o:	my-ctype.h my-math.h my-stdlib.h my-string.h \
+parser.o:	utf-ctype.h my-math.h my-stdlib.h my-string.h \
 		ast.h code_gen.h config.h functions.h \
 		keywords.h list.h log.h numbers.h opcode.h parser.h program.h \
 		storage.h streams.h structures.h sym_table.h utils.h version.h
@@ -388,11 +384,11 @@ functions.o: functions.c my-stdarg.h config.h bf_register.h db_io.h \
   program.h structures.h my-stdio.h version.h functions.h execute.h db.h \
   opcode.h options.h parse_cmd.h list.h log.h server.h network.h \
   storage.h my-string.h ref_count.h streams.h unparse.h utils.h
-keywords.o: keywords.c my-ctype.h config.h my-string.h keywords.h \
+keywords.o: keywords.c utf-ctype.h config.h my-string.h keywords.h \
   structures.h my-stdio.h version.h tokens.h ast.h parser.h program.h \
   sym_table.h y.tab.h utils.h execute.h db.h opcode.h options.h \
   parse_cmd.h
-list.o: list.c my-ctype.h config.h my-string.h my-math.h bf_register.h \
+list.o: list.c utf-ctype.h config.h my-string.h my-math.h bf_register.h \
   exceptions.h functions.h my-stdio.h execute.h db.h program.h \
   structures.h version.h opcode.h options.h parse_cmd.h list.h log.h \
   md5.h pattern.h random.h ref_count.h streams.h storage.h unparse.h \
@@ -410,7 +406,7 @@ name_lookup.o: name_lookup.c options.h config.h my-signal.h my-stdlib.h \
   my-unistd.h my-inet.h my-in.h my-types.h my-socket.h my-wait.h \
   my-string.h log.h my-stdio.h structures.h server.h network.h storage.h \
   ref_count.h timers.h my-time.h
-network.o: network.c options.h config.h net_multi.c my-ctype.h my-fcntl.h \
+network.o: network.c options.h config.h net_multi.c utf-ctype.h my-fcntl.h \
   my-ioctl.h my-signal.h my-stdio.h my-stdlib.h my-string.h my-unistd.h \
   exceptions.h list.h structures.h log.h net_mplex.h net_multi.h \
   net_proto.h network.h server.h streams.h storage.h ref_count.h timers.h \
@@ -431,7 +427,7 @@ objects.o: objects.c db.h config.h program.h structures.h my-stdio.h \
   version.h db_io.h exceptions.h execute.h opcode.h options.h parse_cmd.h \
   functions.h list.h numbers.h quota.h server.h network.h storage.h \
   my-string.h ref_count.h utils.h
-parse_cmd.o: parse_cmd.c my-ctype.h config.h my-stdio.h my-stdlib.h \
+parse_cmd.o: parse_cmd.c utf-ctype.h config.h my-stdio.h my-stdlib.h \
   my-string.h my-time.h db.h program.h structures.h version.h list.h \
   match.h parse_cmd.h storage.h ref_count.h utils.h execute.h opcode.h \
   options.h
@@ -474,14 +470,14 @@ tasks.o: tasks.c my-string.h config.h my-time.h db.h program.h \
   verbs.h
 timers.o: timers.c my-signal.h config.h my-stdlib.h my-sys-time.h \
   options.h my-types.h my-time.h my-unistd.h timers.h
-unparse.o: unparse.c my-ctype.h config.h my-stdio.h ast.h parser.h \
+unparse.o: unparse.c utf-ctype.h config.h my-stdio.h ast.h parser.h \
   program.h structures.h version.h sym_table.h decompile.h exceptions.h \
   functions.h execute.h db.h opcode.h options.h parse_cmd.h keywords.h \
   list.h log.h unparse.h storage.h my-string.h ref_count.h streams.h \
   utils.h
 utf.o: utf.c utf.h streams.h config.h
-utf-ctype.o: utf-ctype.c config.h ucd/ucd.h my-ctype.h
-utils.o: utils.c my-ctype.h config.h my-stdio.h my-string.h db.h \
+utf-ctype.o: utf-ctype.c config.h ucd/ucd.h utf-ctype.h
+utils.o: utils.c utf-ctype.h config.h my-stdio.h my-string.h db.h \
   program.h structures.h version.h db_io.h exceptions.h list.h log.h \
   match.h numbers.h ref_count.h server.h network.h options.h storage.h \
   streams.h utf.h utils.h execute.h opcode.h parse_cmd.h
@@ -491,10 +487,10 @@ verbs.o: verbs.c my-string.h config.h db.h program.h structures.h \
   network.h storage.h ref_count.h unparse.h utils.h verbs.h
 version.o: version.c config.h version.h
 gnu-malloc.o: gnu-malloc.c getpagesize.h
-net_single.o: net_single.c my-ctype.h config.h my-fcntl.h my-stdio.h \
+net_single.o: net_single.c utf-ctype.h config.h my-fcntl.h my-stdio.h \
   my-unistd.h log.h structures.h network.h options.h server.h streams.h \
   utils.h execute.h db.h program.h version.h opcode.h parse_cmd.h
-net_multi.o: net_multi.c my-ctype.h config.h my-fcntl.h my-ioctl.h \
+net_multi.o: net_multi.c utf-ctype.h config.h my-fcntl.h my-ioctl.h \
   my-signal.h my-stdio.h my-stdlib.h my-string.h my-unistd.h exceptions.h \
   list.h structures.h log.h net_mplex.h net_multi.h net_proto.h options.h \
   network.h server.h streams.h storage.h ref_count.h timers.h my-time.h \

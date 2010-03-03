@@ -14,8 +14,8 @@
     Pavel@Xerox.Com
  *****************************************************************************/
 
-#ifndef My_Ctype_H
-#define My_Ctype_H 1
+#ifndef Utf_Ctype_H
+#define Utf_Ctype_H 1
 
 #include "config.h"
 
@@ -34,7 +34,7 @@ extern int my_is_printable(int);
 
 #define my_isascii(x) ((unsigned int)(x) < 127)
 
-#endif				/* !My_Ctype_H */
+#endif				/* !Utf_Ctype_H */
 
 /* 
  * $Log$

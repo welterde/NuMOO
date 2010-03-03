@@ -15,7 +15,7 @@
     Pavel@Xerox.Com
  *****************************************************************************/
 
-#include "my-ctype.h"
+#include "utf-ctype.h"
 #include "my-string.h"
 #include "my-math.h"
 
