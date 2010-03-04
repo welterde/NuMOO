@@ -5,7 +5,6 @@
 #include "functions.h"
 #include "list.h"
 #include "numbers.h"
-#include "quota.h"
 #include "server.h"
 #include "storage.h"
 #include "structures.h"
@@ -236,37 +235,33 @@ bf_create(Var arglist, Byte next, void *vdata, Objid progr)
 	    || (owner != progr && !is_wizard(progr)))
 	    return make_error_pack(E_PERM);
 
-	if (valid(owner) && !decr_quota(owner))
-	    return make_error_pack(E_QUOTA);
-	else {
-	    enum error e;
-	    Objid oid = db_create_object();
-	    Var args;
+        enum error e;
+        Objid oid = db_create_object();
+        Var args;
 
-	    db_set_object_name(oid, str_dup(""));
-	    db_set_object_owner(oid, owner == NOTHING ? oid : owner);
-	    db_change_parent(oid, parent);
+        db_set_object_name(oid, str_dup(""));
+        db_set_object_owner(oid, owner == NOTHING ? oid : owner);
+        db_change_parent(oid, parent);
 
-	    data = alloc_data(sizeof(*data));
-	    *data = oid;
-	    args = new_list(0);
-	    e = call_verb(oid, "initialize", args, 0);
-	    /* e will not be E_INVIND */
+        data = alloc_data(sizeof(*data));
+        *data = oid;
+        args = new_list(0);
+        e = call_verb(oid, "initialize", args, 0);
+        /* e will not be E_INVIND */
 
-	    if (e == E_NONE)
-		return make_call_pack(2, data);
+        if (e == E_NONE)
+            return make_call_pack(2, data);
 
-	    free_data(data);
-	    free_var(args);
+        free_data(data);
+        free_var(args);
 
-	    if (e == E_MAXREC)
-		return make_error_pack(e);
-	    else {		/* (e == E_VERBNF) do nothing */
-		r.type = TYPE_OBJ;
-		r.v.obj = oid;
-		return make_var_pack(r);
-	    }
-	}
+        if (e == E_MAXREC)
+            return make_error_pack(e);
+        else {		/* (e == E_VERBNF) do nothing */
+            r.type = TYPE_OBJ;
+            r.v.obj = oid;
+            return make_var_pack(r);
+        }
     } else {			/* next == 2, returns from initialize verb_call */
 	r.type = TYPE_OBJ;
 	r.v.obj = *data;
@@ -469,7 +464,6 @@ bf_recycle(Var arglist, Byte func_pc, void *vdata, Objid progr)
 	db_change_parent(oid, NOTHING);
 
 	/* Finish the demolition. */
-	incr_quota(db_object_owner(oid));
 	db_destroy_object(oid);
 
 	free_data(data);
