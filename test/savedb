@@ -1,0 +1,4 @@
+#!/bin/sh
+killall moo
+sleep 1;
+cp out/Test.db.new db/Test.db

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+here=$(dirname $0)
+
+cd $here
+
+die () {
+    echo "$*" >&2
+    exit 1
+}
+
+[ -x moo ] || die "*** moo executable not present.  aborted"
+which telnet > /dev/null 2>&1 || die "*** telnet not in path.  aborted"
+
+rm -rf out
+cp -r db out
+
+cd out
+../moo -l test.log Test.db Test.db.new -a 127.0.0.1 -p ${MOO_PORT:-18888} &
+
+
+
+

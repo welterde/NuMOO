@@ -1,0 +1,67 @@
+** LambdaMOO Database, Format Version 4 **
+3
+2
+0
+1
+2
+#0
+System Object
+
+16
+2
+-1
+-1
+-1
+1
+-1
+2
+1
+do_login_command
+2
+173
+-1
+0
+0
+#1
+Root Class
+
+16
+2
+-1
+-1
+-1
+-1
+0
+-1
+0
+0
+0
+#2
+Wizard
+
+7
+2
+-1
+-1
+-1
+1
+-1
+-1
+1
+eval
+2
+93
+-2
+0
+0
+#0:0
+return #2;
+.
+#2:0
+notify(player, toliteral(eval(("return " + argstr) + " ;")));
+.
+0 clocks
+0 queued tasks
+0 suspended tasks
+1 active connections with listeners
+2 0
