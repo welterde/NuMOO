@@ -1,20 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1995, 1996 Xerox Corporation.  All rights reserved.
-  Portions of this code were written by Stephen White, aka ghond.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 /*****************************************************************************
  * Routines for manipulating properties on DB objects
  *****************************************************************************/
@@ -700,51 +683,3 @@ dbpriv_fix_properties_after_chparent(Objid oid, Objid old_parent)
 
     fix_props(oid, 0, old_props, new_props, common_props);
 }
-
-char rcsid_db_properties[] = "$Id$";
-
-/* 
- * $Log$
- * Revision 1.3.2.1  2002/08/29 05:44:23  bjj
- * Add WAIF type as distributed in version 0.95 (one small merge).
- *
- * Revision 1.3  1998/12/14 13:17:38  nop
- * Merge UNSAFE_OPTS (ref fixups); fix Log tag placement to fit CVS whims
- *
- * Revision 1.2  1997/03/03 04:18:31  nop
- * GNU Indent normalization
- *
- * Revision 1.1.1.1  1997/03/03 03:44:59  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 2.6  1996/04/08  01:08:32  pavel
- * Fixed `db_rename_propdef()' to allow case-only changes.  Release 1.8.0p3.
- *
- * Revision 2.5  1996/02/11  00:46:48  pavel
- * Enhanced db_find_property() to report the defining object of the found
- * property.  Release 1.8.0beta2.
- *
- * Revision 2.4  1996/02/08  07:18:02  pavel
- * Renamed TYPE_NUM to TYPE_INT.  Updated copyright notice for 1996.
- * Release 1.8.0beta1.
- *
- * Revision 2.3  1995/12/31  03:27:40  pavel
- * Removed a few more uses of `unsigned'.  Reordered things in
- * db_delete_propdef() to fix an occasional memory smash.
- * Release 1.8.0alpha4.
- *
- * Revision 2.2  1995/12/28  00:41:34  pavel
- * Made *all* built-in property references return fresh value references.
- * Release 1.8.0alpha3.
- *
- * Revision 2.1  1995/12/11  07:52:27  pavel
- * Added support for renaming propdefs.
- *
- * Release 1.8.0alpha2.
- *
- * Revision 2.0  1995/11/30  04:21:13  pavel
- * New baseline version, corresponding to release 1.8.0alpha1.
- *
- * Revision 1.1  1995/11/30  04:21:02  pavel
- * Initial revision
- */

@@ -1,19 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1996 Xerox Corporation.  All rights reserved.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 /* md5.c
    MD5 Message Digest Algorithm implementation.
    Ron Frederick
@@ -321,19 +305,3 @@ md5_Final(md5ctx_t * context, uint8_t digest[16])
     /* Zeroize sensitive information */
     memset((char *) context, 0, sizeof(*context));
 }
-
-/* 
- * $Log$
- * Revision 1.3  1998/12/14 13:18:04  nop
- * Merge UNSAFE_OPTS (ref fixups); fix Log tag placement to fit CVS whims
- *
- * Revision 1.2  1997/03/03 04:18:51  nop
- * GNU Indent normalization
- *
- * Revision 1.1.1.1  1997/03/03 03:45:00  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 1.1  1996/02/18  23:19:18  pavel
- * Initial revision
- *
- */

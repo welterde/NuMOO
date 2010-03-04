@@ -1,20 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1992, 1995, 1996 Xerox Corporation.  All rights reserved.
-  Portions of this code were written by Stephen White, aka ghond.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 #ifndef DB_h
 #define DB_h 1
 
@@ -532,54 +515,3 @@ extern void db_delete_verb(db_verb_handle);
 				 */
 
 #endif				/* !DB_h */
-
-/* 
- * $Log$
- * Revision 1.4.2.1  2005/09/29 06:56:18  bjj
- * Merge HEAD onto WAIF, bringing it approximately to 1.8.2
- *
- * Revision 1.5  2004/05/22 01:25:43  wrog
- * merging in WROGUE changes (W_SRCIP, W_STARTUP, W_OOB)
- *
- * Revision 1.4.10.1  2003/06/03 12:18:00  wrog
- * allow temporary flags on objects
- *
- * Revision 1.4  2001/01/29 08:38:44  bjj
- * Fix Sourceforge Bug #127620: add_verb() should return verbindex
- * And now it does.  Old servers always returned 0, new servers will always
- * return a positive integer.
- *
- * Revision 1.3  1998/12/14 13:17:32  nop
- * Merge UNSAFE_OPTS (ref fixups); fix Log tag placement to fit CVS whims
- *
- * Revision 1.2  1997/03/03 04:18:26  nop
- * GNU Indent normalization
- *
- * Revision 1.1.1.1  1997/03/03 03:45:02  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 2.5  1996/05/12  21:31:37  pavel
- * Added documentation of the memory-management policy for db_add_verb().
- * Release 1.8.0p5.
- *
- * Revision 2.4  1996/02/11  00:47:04  pavel
- * Enhanced db_find_property() to report the defining object of the found
- * property.  Release 1.8.0beta2.
- *
- * Revision 2.3  1996/02/08  06:28:33  pavel
- * Updated copyright notice for 1996.  Release 1.8.0beta1.
- *
- * Revision 2.2  1995/12/28  00:30:27  pavel
- * Added db_disk_size().  Changed db_delete_verb() to unbundle how the verb is
- * found.  Added support to db_find_defined_verb() for suppressing old
- * numeric-string behavior.  Release 1.8.0alpha3.
- *
- * Revision 2.1  1995/12/11  07:56:12  pavel
- * Added `db_object_bytes()' and `db_rename_propdef()'.  Clarified
- * reference-counting behavior of built-in property references.
- *
- * Release 1.8.0alpha2.
- *
- * Revision 2.0  1995/11/30  05:05:11  pavel
- * New baseline version, corresponding to release 1.8.0alpha1.
- */

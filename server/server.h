@@ -1,20 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1992, 1995, 1996 Xerox Corporation.  All rights reserved.
-  Portions of this code were written by Stephen White, aka ghond.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 /* server.h */
 
 /*
@@ -240,49 +223,3 @@ extern int read_active_connections(void);
 
 
 #endif				/* Server_H */
-
-/* 
- * $Log$
- * Revision 1.3.2.1  2005/09/29 06:56:18  bjj
- * Merge HEAD onto WAIF, bringing it approximately to 1.8.2
- *
- * Revision 1.4  2004/05/22 01:25:44  wrog
- * merging in WROGUE changes (W_SRCIP, W_STARTUP, W_OOB)
- *
- * Revision 1.3.10.1  2003/06/07 12:59:04  wrog
- * introduced connection_option macros
- *
- * Revision 1.3  1998/12/14 13:18:58  nop
- * Merge UNSAFE_OPTS (ref fixups); fix Log tag placement to fit CVS whims
- *
- * Revision 1.2  1997/03/03 04:19:26  nop
- * GNU Indent normalization
- *
- * Revision 1.1.1.1  1997/03/03 03:45:04  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 2.3  1996/04/08  01:07:52  pavel
- * Made get_server_option() public.  Release 1.8.0p3.
- *
- * Revision 2.2  1996/02/08  06:13:19  pavel
- * Updated copyright notice for 1996.  Release 1.8.0beta1.
- *
- * Revision 2.1  1995/12/31  03:22:30  pavel
- * Added support for multiple listening points.  Added entry point for dealing
- * with the server-full condition.  Release 1.8.0alpha4.
- *
- * Revision 2.0  1995/11/30  04:54:57  pavel
- * New baseline version, corresponding to release 1.8.0alpha1.
- *
- * Revision 1.4  1992/10/23  23:03:47  pavel
- * Added copyright notice.
- *
- * Revision 1.3  1992/10/21  03:02:35  pavel
- * Converted to use new automatic configuration system.
- *
- * Revision 1.2  1992/09/08  22:05:35  pjames
- * Removed procedures which are no longer exported.
- *
- * Revision 1.1  1992/07/20  23:23:12  pavel
- * Initial RCS-controlled version.
- */

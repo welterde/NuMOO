@@ -1,20 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1992, 1995, 1996 Xerox Corporation.  All rights reserved.
-  Portions of this code were written by Stephen White, aka ghond.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 /* Multi-user networking protocol implementation for local clients on BSD UNIX
  */
 
@@ -168,50 +151,3 @@ proto_close_listener(int fd)
 	}
     errlog("Can't find fd in PROTO_CLOSE_LISTENER!\n");
 }
-
-char rcsid_net_bsd_lcl[] = "$Id$";
-
-/* $Log$
-/* Revision 1.2  1997/03/03 04:19:02  nop
-/* GNU Indent normalization
-/*
- * Revision 1.1.1.1  1997/03/03 03:45:02  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 2.4  1996/03/10  01:13:22  pavel
- * Moved definition of DEFAULT_CONNECT_FILE to options.h.  Release 1.8.0.
- *
- * Revision 2.3  1996/02/08  06:35:21  pavel
- * Renamed err/logf() to errlog/oklog().  Updated copyright notice for 1996.
- * Release 1.8.0beta1.
- *
- * Revision 2.2  1995/12/31  00:00:45  pavel
- * Added support for the new multiple-listening-points interface.
- * Release 1.8.0alpha4.
- *
- * Revision 2.1  1995/12/28  00:34:57  pavel
- * Removed old support for protocol-specific input EOL conventions.
- * Release 1.8.0alpha3.
- *
- * Revision 2.0  1995/11/30  04:46:53  pavel
- * New baseline version, corresponding to release 1.8.0alpha1.
- *
- * Revision 1.6  1992/10/23  23:03:47  pavel
- * Added copyright notice.
- *
- * Revision 1.5  1992/10/21  03:02:35  pavel
- * Converted to use new automatic configuration system.
- *
- * Revision 1.4  1992/10/06  01:36:23  pavel
- * Moved non-blocking code to net_multi.c, replacing it with code to set
- * proto->believe_eof appropriately.
- *
- * Revision 1.3  1992/09/26  02:25:02  pavel
- * Added support for printing the network protocol name on server start-up.
- *
- * Revision 1.2  1992/09/24  00:39:47  pavel
- * Removed useless #include's.
- *
- * Revision 1.1  1992/09/23  22:33:38  pavel
- * Initial RCS-controlled version.
- */

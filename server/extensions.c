@@ -1,20 +1,3 @@
-/******************************************************************************
-  Copyright (c) 1995, 1996 Xerox Corporation.  All rights reserved.
-  Portions of this code were written by Stephen White, aka ghond.
-  Use and copying of this software and preparation of derivative works based
-  upon this software are permitted.  Any distribution of this software or
-  derivative works must comply with all applicable United States export
-  control laws.  This software is made available AS IS, and Xerox Corporation
-  makes no warranty about the software, its performance or its conformity to
-  any specification.  Any person obtaining a copy of this software is requested
-  to send their name and post office or electronic mail address to:
-    Pavel Curtis
-    Xerox PARC
-    3333 Coyote Hill Rd.
-    Palo Alto, CA 94304
-    Pavel@Xerox.Com
- *****************************************************************************/
-
 /* Extensions to the MOO server
 
  * This module contains some examples of how to extend the MOO server using
@@ -184,39 +167,3 @@ register_extensions()
     register_function("verb_cache_stats", 0, 0, bf_verb_cache_stats);
 #endif
 }
-
-char rcsid_extensions[] = "$Id$";
-
-/* 
- * $Log$
- * Revision 1.4  1998/12/14 13:17:52  nop
- * Merge UNSAFE_OPTS (ref fixups); fix Log tag placement to fit CVS whims
- *
- * Revision 1.3  1997/07/07 03:24:54  nop
- * Merge UNSAFE_OPTS (r5) after extensive testing.
- * 
- * Revision 1.2.2.3  1997/05/29 11:56:22  nop
- * Added Jason Maltzen's builtin to return a list version of cache stats.
- *
- * Revision 1.2.2.2  1997/03/20 18:08:29  bjj
- * add #include "utils.h" to get new inline free_var
- *
- * Revision 1.2.2.1  1997/03/20 07:26:04  nop
- * First pass at the new verb cache.  Some ugly code inside.
- *
- * Revision 1.2  1997/03/03 04:18:41  nop
- * GNU Indent normalization
- *
- * Revision 1.1.1.1  1997/03/03 03:45:00  nop
- * LambdaMOO 1.8.0p5
- *
- * Revision 2.1  1996/02/08  07:03:47  pavel
- * Renamed err/logf() to errlog/oklog().  Updated copyright notice for 1996.
- * Release 1.8.0beta1.
- *
- * Revision 2.0  1995/11/30  04:26:34  pavel
- * New baseline version, corresponding to release 1.8.0alpha1.
- *
- * Revision 1.1  1995/11/30  04:26:21  pavel
- * Initial revision
- */
