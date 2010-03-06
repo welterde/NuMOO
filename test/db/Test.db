@@ -1,6 +1,6 @@
 ** LambdaMOO Database, Format Version 4 **
-3
-2
+11
+156
 0
 1
 2
@@ -14,14 +14,54 @@ System Object
 -1
 1
 -1
-2
+3
 1
 do_login_command
 2
 173
 -1
-0
-0
+8
+root_class
+wizard_player
+first_room
+no_one
+test
+assert
+mock
+functests
+8
+1
+1
+2
+1
+1
+2
+2
+1
+1
+3
+2
+1
+1
+5
+2
+1
+1
+10
+2
+1
+1
+8
+2
+1
+1
+9
+2
+1
+1
+7
+2
+1
 #1
 Root Class
 
@@ -41,12 +81,12 @@ Wizard
 
 7
 2
+3
 -1
 -1
+4
 -1
-1
--1
--1
+5
 1
 eval
 2
@@ -54,11 +94,1247 @@ eval
 -2
 0
 0
+#3
+First Room
+
+0
+2
+-1
+2
+-1
+1
+-1
+4
+0
+0
+0
+#4
+
+
+0
+2
+-1
+-1
+-1
+1
+2
+6
+8
+parse_verbref
+2
+173
+-1
+parse_propref
+2
+173
+-1
+@edit
+2
+93
+-2
+@verb
+2
+93
+-2
+@verbs
+2
+93
+-2
+@props
+2
+93
+-2
+tell
+2
+173
+-1
+@prop
+2
+93
+-2
+0
+0
+#5
+
+
+2
+2
+-1
+-1
+-1
+4
+-1
+-1
+1
+eval
+2
+173
+-1
+0
+0
+#6
+
+
+0
+2
+-1
+-1
+-1
+1
+-1
+8
+0
+0
+0
+#7
+
+
+0
+2
+-1
+-1
+-1
+1
+-1
+-1
+145
+test_disassemble
+2
+173
+-1
+test_log_cache_stats
+2
+173
+-1
+test_verb_cache_stats
+2
+173
+-1
+test_call_function
+2
+173
+-1
+test_raise
+2
+173
+-1
+test_suspend
+2
+173
+-1
+test_read
+2
+173
+-1
+test_seconds_left
+2
+173
+-1
+test_ticks_left
+2
+173
+-1
+test_pass
+2
+173
+-1
+test_set_task_perms
+2
+173
+-1
+test_caller_perms
+2
+173
+-1
+test_callers
+2
+173
+-1
+test_task_stack
+2
+173
+-1
+test_function_info
+2
+173
+-1
+test_load_server_options
+2
+173
+-1
+test_value_bytes
+2
+173
+-1
+test_value_hash
+2
+173
+-1
+test_string_hash
+2
+173
+-1
+test_binary_hash
+2
+173
+-1
+test_decode_binary
+2
+173
+-1
+test_encode_binary
+2
+173
+-1
+test_length
+2
+173
+-1
+test_setadd
+2
+173
+-1
+test_setremove
+2
+173
+-1
+test_listappend
+2
+173
+-1
+test_listinsert
+2
+173
+-1
+test_listdelete
+2
+173
+-1
+test_listset
+2
+173
+-1
+test_equal
+2
+173
+-1
+test_is_member
+2
+173
+-1
+test_tostr
+2
+173
+-1
+test_toliteral
+2
+173
+-1
+test_match
+2
+173
+-1
+test_rmatch
+2
+173
+-1
+test_substitute
+2
+173
+-1
+test_crypt
+2
+173
+-1
+test_index
+2
+173
+-1
+test_rindex
+2
+173
+-1
+test_strcmp
+2
+173
+-1
+test_strsub
+2
+173
+-1
+test_tochar
+2
+173
+-1
+test_charname
+2
+173
+-1
+test_ord
+2
+173
+-1
+test_encode_chars
+2
+173
+-1
+test_decode_chars
+2
+173
+-1
+test_server_log
+2
+173
+-1
+test_toint
+2
+173
+-1
+test_tonum
+2
+173
+-1
+test_tofloat
+2
+173
+-1
+test_min
+2
+173
+-1
+test_max
+2
+173
+-1
+test_abs
+2
+173
+-1
+test_random
+2
+173
+-1
+test_time
+2
+173
+-1
+test_ftime
+2
+173
+-1
+test_ctime
+2
+173
+-1
+test_floatstr
+2
+173
+-1
+test_sqrt
+2
+173
+-1
+test_sin
+2
+173
+-1
+test_cos
+2
+173
+-1
+test_tan
+2
+173
+-1
+test_asin
+2
+173
+-1
+test_acos
+2
+173
+-1
+test_atan
+2
+173
+-1
+test_sinh
+2
+173
+-1
+test_cosh
+2
+173
+-1
+test_tanh
+2
+173
+-1
+test_asinh
+2
+173
+-1
+test_acosh
+2
+173
+-1
+test_atanh
+2
+173
+-1
+test_exp
+2
+173
+-1
+test_log
+2
+173
+-1
+test_log10
+2
+173
+-1
+test_ceil
+2
+173
+-1
+test_floor
+2
+173
+-1
+test_trunc
+2
+173
+-1
+test_expm1
+2
+173
+-1
+test_log1p
+2
+173
+-1
+test_erf
+2
+173
+-1
+test_erfc
+2
+173
+-1
+test_lgamma
+2
+173
+-1
+test_j
+2
+173
+-1
+test_y
+2
+173
+-1
+test_toobj
+2
+173
+-1
+test_typeof
+2
+173
+-1
+test_create
+2
+173
+-1
+test_recycle
+2
+173
+-1
+test_object_bytes
+2
+173
+-1
+test_valid
+2
+173
+-1
+test_parent
+2
+173
+-1
+test_children
+2
+173
+-1
+test_chparent
+2
+173
+-1
+test_max_object
+2
+173
+-1
+test_players
+2
+173
+-1
+test_is_player
+2
+173
+-1
+test_set_player_flag
+2
+173
+-1
+test_move
+2
+173
+-1
+test_properties
+2
+173
+-1
+test_property_info
+2
+173
+-1
+test_set_property_info
+2
+173
+-1
+test_add_property
+2
+173
+-1
+test_delete_property
+2
+173
+-1
+test_clear_property
+2
+173
+-1
+test_is_clear_property
+2
+173
+-1
+test_server_version
+2
+173
+-1
+test_renumber
+2
+173
+-1
+test_reset_max_object
+2
+173
+-1
+test_memory_usage
+2
+173
+-1
+test_shutdown
+2
+173
+-1
+test_dump_database
+2
+173
+-1
+test_db_disk_size
+2
+173
+-1
+test_open_network_connection
+2
+173
+-1
+test_connected_players
+2
+173
+-1
+test_connected_seconds
+2
+173
+-1
+test_idle_seconds
+2
+173
+-1
+test_connection_name
+2
+173
+-1
+test_notify
+2
+173
+-1
+test_boot_player
+2
+173
+-1
+test_set_connection_option
+2
+173
+-1
+test_connection_option
+2
+173
+-1
+test_connection_options
+2
+173
+-1
+test_listen
+2
+173
+-1
+test_unlisten
+2
+173
+-1
+test_listeners
+2
+173
+-1
+test_buffered_output_length
+2
+173
+-1
+test_task_id
+2
+173
+-1
+test_queued_tasks
+2
+173
+-1
+test_kill_task
+2
+173
+-1
+test_output_delimiters
+2
+173
+-1
+test_queue_info
+2
+173
+-1
+test_resume
+2
+173
+-1
+test_force_input
+2
+173
+-1
+test_flush_input
+2
+173
+-1
+test_verbs
+2
+173
+-1
+test_verb_info
+2
+173
+-1
+test_set_verb_info
+2
+173
+-1
+test_verb_args
+2
+173
+-1
+test_set_verb_args
+2
+173
+-1
+test_add_verb
+2
+173
+-1
+test_delete_verb
+2
+173
+-1
+test_verb_code
+2
+173
+-1
+test_set_verb_code
+2
+173
+-1
+test_eval
+2
+173
+-1
+test_new_waif
+2
+173
+-1
+0
+0
+#8
+Assertion Utils
+
+0
+2
+-1
+-1
+-1
+1
+-1
+9
+0
+0
+0
+#9
+Generic Mock
+
+0
+2
+-1
+-1
+-1
+1
+-1
+10
+0
+0
+0
+#10
+Generic Unit Test
+
+0
+2
+-1
+-1
+-1
+1
+-1
+7
+0
+0
+0
 #0:0
 return #2;
 .
 #2:0
 notify(player, toliteral(eval(("return " + argstr) + " ;")));
+.
+#4:0
+m = match(args[1], "^ *%([^:]+%):%([^ ]+%)");
+if (!m)
+return E_NONE;
+endif
+e = $no_one:eval(substitute("%1", m));
+if (!e[1])
+return E_INVARG;
+endif
+return {e[2], substitute("%2", m)};
+.
+#4:1
+m = match(args[1], "^ *%([^.]+%)%.%([^ ]+%)");
+if (!m)
+return E_NONE;
+endif
+e = $no_one:eval(substitute("%1", m));
+if (!e[1])
+return E_INVARG;
+endif
+return {e[2], substitute("%2", m)};
+.
+#4:2
+if (spec = player:parse_verbref(argstr))
+code = verb_code(@spec);
+notify(player, tostr("#$# edit name: ", spec[1], ":", spec[2], " upload: .program ", spec[1], ":", spec[2]));
+for line in (code)
+notify(player, line);
+endfor
+notify(player, ".");
+elseif (spec = player:parse_propref(argstr))
+notify(player, "not implemented yet");
+endif
+.
+#4:3
+set_task_perms(player);
+spec = player:parse_verbref(dobjstr);
+add_verb(spec[1], {player, "rxd", spec[2]}, {"this", "none", "this"});
+notify(player, tostr("Added verb ", spec[1], ":", spec[2]));
+.
+#4:4
+{ok, what} = $no_one:eval(argstr);
+vs = verbs(what);
+if (!vs)
+notify(player, tostr("no verbs on ", argstr));
+else
+notify(player, tostr("verbs on ", argstr, ":"));
+for v in (vs)
+notify(player, tostr("    ", argstr, ":", v));
+endfor
+endif
+.
+#4:5
+.
+#4:6
+notify(this, tostr(@args));
+.
+#4:7
+set_task_perms(player);
+spec = player:parse_propref(dobjstr);
+add_property(spec[1], spec[2], 0, {player, "r"});
+player:tell("property ", spec[1], ".", spec[2], " added");
+.
+#5:0
+set_task_perms(this);
+exp = args[1];
+caller = `valid(caller) ! E_TYPE' ? caller | #-1;
+if (exp[1] != ";")
+return eval(tostr("this=", caller, "; return ", exp, ";"));
+else
+return eval(tostr("this=", caller, ";", exp, ";"));
+endif
+.
+#7:0
+{"disassemble", 2, 2, {1, -1}};
+.
+#7:1
+{"log_cache_stats", 0, 0, {}};
+.
+#7:2
+{"verb_cache_stats", 0, 0, {}};
+.
+#7:3
+{"call_function", 1, -1, {2}};
+.
+#7:4
+{"raise", 1, 3, {-1, 2, -1}};
+.
+#7:5
+{"suspend", 0, 1, {0}};
+.
+#7:6
+{"read", 0, 2, {1, -1}};
+.
+#7:7
+{"seconds_left", 0, 0, {}};
+.
+#7:8
+{"ticks_left", 0, 0, {}};
+.
+#7:9
+{"pass", 0, -1, {}};
+.
+#7:10
+{"set_task_perms", 1, 1, {1}};
+.
+#7:11
+{"caller_perms", 0, 0, {}};
+.
+#7:12
+{"callers", 0, 1, {-1}};
+.
+#7:13
+{"task_stack", 1, 2, {0, -1}};
+.
+#7:14
+{"function_info", 0, 1, {2}};
+.
+#7:15
+{"load_server_options", 0, 0, {}};
+.
+#7:16
+{"value_bytes", 1, 1, {-1}};
+.
+#7:17
+{"value_hash", 1, 1, {-1}};
+.
+#7:18
+{"string_hash", 1, 1, {2}};
+.
+#7:19
+{"binary_hash", 1, 1, {2}};
+.
+#7:20
+{"decode_binary", 1, 2, {2, -1}};
+.
+#7:21
+{"encode_binary", 0, -1, {}};
+.
+#7:22
+{"length", 1, 1, {-1}};
+.
+#7:23
+{"setadd", 2, 2, {4, -1}};
+.
+#7:24
+{"setremove", 2, 2, {4, -1}};
+.
+#7:25
+{"listappend", 2, 3, {4, -1, 0}};
+.
+#7:26
+{"listinsert", 2, 3, {4, -1, 0}};
+.
+#7:27
+{"listdelete", 2, 2, {4, 0}};
+.
+#7:28
+{"listset", 3, 3, {4, -1, 0}};
+.
+#7:29
+{"equal", 2, 2, {-1, -1}};
+.
+#7:30
+{"is_member", 2, 2, {-1, 4}};
+.
+#7:31
+{"tostr", 0, -1, {}};
+.
+#7:32
+{"toliteral", 1, 1, {-1}};
+.
+#7:33
+{"match", 2, 3, {2, 2, -1}};
+.
+#7:34
+{"rmatch", 2, 3, {2, 2, -1}};
+.
+#7:35
+{"substitute", 2, 2, {2, 4}};
+.
+#7:36
+{"crypt", 1, 2, {2, 2}};
+.
+#7:37
+{"index", 2, 3, {2, 2, -1}};
+.
+#7:38
+{"rindex", 2, 3, {2, 2, -1}};
+.
+#7:39
+{"strcmp", 2, 2, {2, 2}};
+.
+#7:40
+{"strsub", 3, 4, {2, 2, 2, -1}};
+.
+#7:41
+{"tochar", 1, 1, {-1}};
+.
+#7:42
+{"charname", 1, 1, {2}};
+.
+#7:43
+{"ord", 1, 1, {2}};
+.
+#7:44
+{"encode_chars", 2, 2, {-1, 2}};
+.
+#7:45
+{"decode_chars", 2, 3, {2, 2, -1}};
+.
+#7:46
+{"server_log", 1, 2, {2, -1}};
+.
+#7:47
+{"toint", 1, 1, {-1}};
+.
+#7:48
+{"tonum", 1, 1, {-1}};
+.
+#7:49
+{"tofloat", 1, 1, {-1}};
+.
+#7:50
+{"min", 1, -1, {-2}};
+.
+#7:51
+{"max", 1, -1, {-2}};
+.
+#7:52
+{"abs", 1, 1, {-2}};
+.
+#7:53
+{"random", 0, 1, {0}};
+.
+#7:54
+{"time", 0, 0, {}};
+.
+#7:55
+{"ftime", 0, 0, {}};
+.
+#7:56
+{"ctime", 0, 2, {0, 2}};
+.
+#7:57
+{"floatstr", 2, 3, {9, 0, -1}};
+.
+#7:58
+{"sqrt", 1, 1, {9}};
+.
+#7:59
+{"sin", 1, 1, {9}};
+.
+#7:60
+{"cos", 1, 1, {9}};
+.
+#7:61
+{"tan", 1, 1, {9}};
+.
+#7:62
+{"asin", 1, 1, {9}};
+.
+#7:63
+{"acos", 1, 1, {9}};
+.
+#7:64
+{"atan", 1, 2, {9, 9}};
+.
+#7:65
+{"sinh", 1, 1, {9}};
+.
+#7:66
+{"cosh", 1, 1, {9}};
+.
+#7:67
+{"tanh", 1, 1, {9}};
+.
+#7:68
+{"asinh", 1, 1, {9}};
+.
+#7:69
+{"acosh", 1, 1, {9}};
+.
+#7:70
+{"atanh", 1, 1, {9}};
+.
+#7:71
+{"exp", 1, 1, {9}};
+.
+#7:72
+{"log", 1, 1, {9}};
+.
+#7:73
+{"log10", 1, 1, {9}};
+.
+#7:74
+{"ceil", 1, 1, {9}};
+.
+#7:75
+{"floor", 1, 1, {9}};
+.
+#7:76
+{"trunc", 1, 1, {9}};
+.
+#7:77
+{"expm1", 1, 1, {9}};
+.
+#7:78
+{"log1p", 1, 1, {9}};
+.
+#7:79
+{"erf", 1, 1, {9}};
+.
+#7:80
+{"erfc", 1, 1, {9}};
+.
+#7:81
+{"lgamma", 1, 1, {9}};
+.
+#7:82
+{"j", 2, 2, {0, 9}};
+.
+#7:83
+{"y", 2, 2, {0, 9}};
+.
+#7:84
+{"toobj", 1, 1, {-1}};
+.
+#7:85
+{"typeof", 1, 1, {-1}};
+.
+#7:86
+{"create", 1, 2, {1, 1}};
+.
+#7:87
+{"recycle", 1, 1, {1}};
+.
+#7:88
+{"object_bytes", 1, 1, {1}};
+.
+#7:89
+{"valid", 1, 1, {1}};
+.
+#7:90
+{"parent", 1, 1, {1}};
+.
+#7:91
+{"children", 1, 1, {1}};
+.
+#7:92
+{"chparent", 2, 2, {1, 1}};
+.
+#7:93
+{"max_object", 0, 0, {}};
+.
+#7:94
+{"players", 0, 0, {}};
+.
+#7:95
+{"is_player", 1, 1, {1}};
+.
+#7:96
+{"set_player_flag", 2, 2, {1, -1}};
+.
+#7:97
+{"move", 2, 2, {1, 1}};
+.
+#7:98
+{"properties", 1, 1, {1}};
+.
+#7:99
+{"property_info", 2, 2, {1, 2}};
+.
+#7:100
+{"set_property_info", 3, 3, {1, 2, 4}};
+.
+#7:101
+{"add_property", 4, 4, {1, 2, -1, 4}};
+.
+#7:102
+{"delete_property", 2, 2, {1, 2}};
+.
+#7:103
+{"clear_property", 2, 2, {1, 2}};
+.
+#7:104
+{"is_clear_property", 2, 2, {1, 2}};
+.
+#7:105
+{"server_version", 0, 0, {}};
+.
+#7:106
+{"renumber", 1, 1, {1}};
+.
+#7:107
+{"reset_max_object", 0, 0, {}};
+.
+#7:108
+{"memory_usage", 0, 0, {}};
+.
+#7:109
+{"shutdown", 0, 1, {2}};
+.
+#7:110
+{"dump_database", 0, 0, {}};
+.
+#7:111
+{"db_disk_size", 0, 0, {}};
+.
+#7:112
+{"open_network_connection", 0, -1, {}};
+.
+#7:113
+{"connected_players", 0, 1, {-1}};
+.
+#7:114
+{"connected_seconds", 1, 1, {1}};
+.
+#7:115
+{"idle_seconds", 1, 1, {1}};
+.
+#7:116
+{"connection_name", 1, 1, {1}};
+.
+#7:117
+{"notify", 2, 3, {1, 2, -1}};
+.
+#7:118
+{"boot_player", 1, 1, {1}};
+.
+#7:119
+{"set_connection_option", 3, 3, {1, 2, -1}};
+.
+#7:120
+{"connection_option", 2, 2, {1, 2}};
+.
+#7:121
+{"connection_options", 1, 1, {1}};
+.
+#7:122
+{"listen", 2, 3, {1, -1, -1}};
+.
+#7:123
+{"unlisten", 1, 1, {-1}};
+.
+#7:124
+{"listeners", 0, 0, {}};
+.
+#7:125
+{"buffered_output_length", 0, 1, {1}};
+.
+#7:126
+{"task_id", 0, 0, {}};
+.
+#7:127
+{"queued_tasks", 0, 0, {}};
+.
+#7:128
+{"kill_task", 1, 1, {0}};
+.
+#7:129
+{"output_delimiters", 1, 1, {1}};
+.
+#7:130
+{"queue_info", 0, 1, {1}};
+.
+#7:131
+{"resume", 1, 2, {0, -1}};
+.
+#7:132
+{"force_input", 2, 3, {1, 2, -1}};
+.
+#7:133
+{"flush_input", 1, 2, {1, -1}};
+.
+#7:134
+{"verbs", 1, 1, {1}};
+.
+#7:135
+{"verb_info", 2, 2, {1, -1}};
+.
+#7:136
+{"set_verb_info", 3, 3, {1, -1, 4}};
+.
+#7:137
+{"verb_args", 2, 2, {1, -1}};
+.
+#7:138
+{"set_verb_args", 3, 3, {1, -1, 4}};
+.
+#7:139
+{"add_verb", 3, 3, {1, 4, 4}};
+.
+#7:140
+{"delete_verb", 2, 2, {1, -1}};
+.
+#7:141
+{"verb_code", 2, 4, {1, -1, -1, -1}};
+.
+#7:142
+{"set_verb_code", 3, 3, {1, -1, 4}};
+.
+#7:143
+{"eval", 1, 1, {2}};
+.
+#7:144
+{"new_waif", 0, 0, {}};
 .
 0 clocks
 0 queued tasks
