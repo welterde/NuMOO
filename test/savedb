@@ -1,4 +1,4 @@
 #!/bin/sh
 killall moo
-sleep 1;
-cp out/Test.db.new db/Test.db
+sleep 5;
+cp -v out/Test.db.new db/Test.db

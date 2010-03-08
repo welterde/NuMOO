@@ -1,6 +1,6 @@
 ** LambdaMOO Database, Format Version 4 **
 11
-156
+165
 0
 1
 2
@@ -20,16 +20,17 @@ do_login_command
 2
 173
 -1
-8
+9
 root_class
 wizard_player
 first_room
 no_one
 test
 assert
-mock
 functests
-8
+player
+testdata
+9
 1
 1
 2
@@ -55,11 +56,15 @@ functests
 2
 1
 1
-9
+7
 2
 1
 1
-7
+4
+2
+1
+1
+9
 2
 1
 #1
@@ -187,7 +192,7 @@ eval
 0
 0
 #7
-
+Builtin Function Tests
 
 0
 2
@@ -197,7 +202,7 @@ eval
 1
 -1
 -1
-145
+146
 test_disassemble
 2
 173
@@ -778,8 +783,53 @@ test_new_waif
 2
 173
 -1
-0
-0
+_test_disassemble_1
+2
+173
+-1
+1
+_test_disassemble_1_expect
+1
+4
+18
+2
+Language version number: 4
+2
+First line number: 1
+2
+
+2
+Main code vector:
+2
+=================
+2
+[Bytes for labels = 1, literals = 1, forks = 1, variables = 1, stack refs = 1]
+2
+[Maximum stack size = 2]
+2
+  0: 246                   NUM 123
+2
+  1: 052                 * PUT x
+2
+  2: 111                   POP
+2
+  3: 100 000               PUSH_LITERAL 456
+2
+  5: 053                 * PUT y
+2
+  6: 111                   POP
+2
+  7: 085                   PUSH x
+2
+  8: 086                   PUSH y
+2
+  9: 021                 * ADD
+2
+ 10: 108                   RETURN
+2
+ 11: 110                   DONE
+2
+1
 #8
 Assertion Utils
 
@@ -791,11 +841,35 @@ Assertion Utils
 1
 -1
 9
-0
+6
+equal
+2
+173
+-1
+not_equal
+2
+173
+-1
+failure
+2
+173
+-1
+ok
+2
+173
+-1
+call_raises
+2
+173
+-1
+eval_raises
+2
+173
+-1
 0
 0
 #9
-Generic Mock
+Test Data (Invariant)
 
 0
 2
@@ -805,9 +879,79 @@ Generic Mock
 1
 -1
 10
-0
-0
-0
+2
+disassemble_1
+2
+173
+-1
+disassemble_empty
+2
+173
+-1
+2
+disassemble_1_expect
+disassemble_empty_expect
+2
+4
+18
+2
+Language version number: 4
+2
+First line number: 1
+2
+
+2
+Main code vector:
+2
+=================
+2
+[Bytes for labels = 1, literals = 1, forks = 1, variables = 1, stack refs = 1]
+2
+[Maximum stack size = 2]
+2
+  0: 246                   NUM 123
+2
+  1: 052                 * PUT x
+2
+  2: 111                   POP
+2
+  3: 100 000               PUSH_LITERAL 456
+2
+  5: 053                 * PUT y
+2
+  6: 111                   POP
+2
+  7: 085                   PUSH x
+2
+  8: 086                   PUSH y
+2
+  9: 021                 * ADD
+2
+ 10: 108                   RETURN
+2
+ 11: 110                   DONE
+2
+1
+4
+8
+2
+Language version number: 4
+2
+First line number: 1
+2
+
+2
+Main code vector:
+2
+=================
+2
+[Bytes for labels = 1, literals = 1, forks = 1, variables = 1, stack refs = 1]
+2
+[Maximum stack size = 0]
+2
+  0: 110                   DONE
+2
+1
 #10
 Generic Unit Test
 
@@ -819,14 +963,24 @@ Generic Unit Test
 1
 -1
 7
-0
+1
+skip
+2
+173
+-1
 0
 0
 #0:0
 return #2;
 .
 #2:0
-notify(player, toliteral(eval(("return " + argstr) + " ;")));
+evalstr = ("return " + argstr) + ";";
+results = eval(evalstr);
+if (results[1])
+notify(player, "=> " + toliteral(results[2]));
+else
+notify(player, "ERRORS: " + toliteral(results[2]));
+endif
 .
 #4:0
 m = match(args[1], "^ *%([^:]+%):%([^ ]+%)");
@@ -876,11 +1030,20 @@ notify(player, tostr("no verbs on ", argstr));
 else
 notify(player, tostr("verbs on ", argstr, ":"));
 for v in (vs)
-notify(player, tostr("    ", argstr, ":", v));
+notify(player, tostr("    ", what, ":", v));
 endfor
 endif
 .
 #4:5
+what = $no_one:eval(argstr)[2];
+props = properties(what);
+if (!props)
+return player:tell("No properties on ", what);
+endif
+player:tell("Properties on ", what);
+for p in (props)
+player:tell("    ", what, ".", p);
+endfor
 .
 #4:6
 notify(this, tostr(@args));
@@ -903,12 +1066,26 @@ endif
 .
 #7:0
 {"disassemble", 2, 2, {1, -1}};
+$assert:equal(disassemble($testdata, "disassemble_1"), $testdata.disassemble_1_expect);
 .
 #7:1
 {"log_cache_stats", 0, 0, {}};
+$test:skip("not testable in-moo");
 .
 #7:2
 {"verb_cache_stats", 0, 0, {}};
+"Can't test exact values but we can test form";
+"Should look something like this:";
+{113, 126, 75, 12, {7501, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+vcs = verb_cache_stats();
+$assert:ok(length(vcs) == 5, " cache has 5 elements");
+$assert:ok(typeof(vcs[1]) == INT, "cache data type 1");
+$assert:ok(typeof(vcs[2]) == INT, "cache data type 2");
+$assert:ok(typeof(vcs[3]) == INT, "cache data type 3");
+$assert:ok(typeof(vcs[4]) == INT, "cache data type 4");
+$assert:ok(typeof(vcs[5]) == LIST, "cache data type 5");
+"good enough";
+$assert:ok(length(vcs[5]) > 8, "length of histogram");
 .
 #7:3
 {"call_function", 1, -1, {2}};
@@ -933,6 +1110,8 @@ endif
 .
 #7:10
 {"set_task_perms", 1, 1, {1}};
+set_task_perms($no_one);
+$assert:eval_raises("notify(player, \"BOO\");", E_PERM);
 .
 #7:11
 {"caller_perms", 0, 0, {}};
@@ -1336,8 +1515,88 @@ endif
 #7:144
 {"new_waif", 0, 0, {}};
 .
+#7:145
+x = 123;
+y = 456;
+return x + y;
+.
+#8:0
+{lhs, rhs, ?message = ""} = args;
+if (lhs == rhs)
+return 1;
+endif
+message = tostr(message, " ", toliteral(lhs), " == ", toliteral(rhs));
+this:failure(message);
+.
+#8:1
+{lhs, rhs, ?message = ""} = args;
+if (lhs != rhs)
+return 1;
+endif
+message = tostr(message, " ", toliteral(lhs), " != ", toliteral(rhs));
+this:failure(message);
+.
+#8:2
+{?message = "(no message)", ?value = 0} = args;
+raise(this, "Assertion failed:" + message, value);
+.
+#8:3
+{val, ?message = ""} = args;
+if (val)
+return 1;
+endif
+message = tostr(message, " ", toliteral(val));
+this:failure(message);
+.
+#8:4
+"Here for completeness but it's really kind of annoying to use";
+{o, v, a, errs, ?msg = ""} = args;
+set_task_perms(caller_perms());
+if (typeof(errs) != LIST)
+errs = {errs};
+endif
+threw = 0;
+try
+o:(v)(@a);
+except (@errs)
+threw = 1;
+endtry
+if (!threw)
+this:failure(tostr(msg, " ", o, ":", v, " raises ", toliteral(errs)));
+else
+return 1;
+endif
+.
+#8:5
+{expr, errs, ?msg = ""} = args;
+set_task_perms(caller_perms());
+if (typeof(errs) != LIST)
+errs = {errs};
+endif
+threw = 0;
+result = {};
+try
+result = eval(expr);
+except (@errs)
+threw = 1;
+endtry
+if (!threw)
+this:failure(tostr(msg, " ", " raises ", toliteral(errs)));
+else
+return 1;
+endif
+.
+#9:0
+x = 123;
+y = 456;
+return x + y;
+.
+#10:0
+{?reason = "(no reason)"} = args;
+{caller, verbname, prog, vloc, playa, lineno} = callers(1)[1];
+player:tell("SKIPPED: ", caller, ":", verbname, " line ", lineno, ": ", reason);
+.
 0 clocks
 0 queued tasks
 0 suspended tasks
-1 active connections with listeners
-2 0
+0 active connections with listeners
