@@ -65,4 +65,6 @@ extern int value_bytes(Var);
 extern const char *raw_bytes_to_binary(const char *buffer, int buflen);
 extern const char *binary_to_raw_bytes(const char *binary, int *rawlen);
 
+extern const char *string_quote(const char *si);
+
 #endif

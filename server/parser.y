@@ -919,12 +919,24 @@ start_over:
 	    c = lex_getc();
 	    if (c == '"')
 		break;
-	    if (c == '\\')
-		c = lex_getc();
 	    if (c == '\n' || c == EOF) {
 		yyerror("Missing quote");
 		break;
 	    }
+	    if (c == '\\') {
+		c = lex_getc();
+                switch (c) {
+                case 'a': c = '\a'; break;
+                case 'b': c = '\b'; break;
+                case 'e': c = '\e'; break;
+                case 'f': c = '\f'; break;
+                case 'n': c = '\n'; break;
+                case 'r': c = '\r'; break;
+                case 't': c = '\t'; break;
+                case 'v': c = '\v'; break;
+                }
+            }
+
 	    stream_add_utf(token_stream, c);
 	}
 	yylval.string = alloc_string(reset_stream(token_stream));

@@ -451,3 +451,34 @@ binary_to_raw_bytes(const char *binary, int *buflen)
     *buflen = stream_length(s);
     return reset_stream(s);
 }
+
+const char *
+string_quote(const char *si)
+{
+  Stream *s = new_stream(strlen(si) + 5);
+  const unsigned char *str = (const unsigned char*)si;
+	
+  stream_add_char(s, '"');
+  while (*str) {
+    switch (*str) {
+    case '\a':	stream_add_string(s, "\\a"); str++; break;
+    case '\b':	stream_add_string(s, "\\b"); str++; break;
+    case '\e':	stream_add_string(s, "\\e"); str++; break;
+    case '\f':	stream_add_string(s, "\\f"); str++; break;
+    case '\n':	stream_add_string(s, "\\n"); str++; break;
+    case '\r':	stream_add_string(s, "\\r"); str++; break;
+    case '\t':	stream_add_string(s, "\\t"); str++; break;
+    case '\v':	stream_add_string(s, "\\v"); str++; break;
+
+    case '"':	case '\\':
+      stream_add_char(s, '\\');
+      /* fall thru */
+    default:
+	stream_add_char(s, *str++);
+    }
+  }
+  stream_add_char(s, '"');
+  si = str_dup(reset_stream(s));
+  free_stream(s);
+  return si;
+}

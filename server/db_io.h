@@ -11,7 +11,7 @@
 extern DB_Version dbio_input_version;
 				/* What DB-format version are we reading? */
 
-extern void dbio_read_line(char *s, int n);
+extern int dbio_read_line(char *s, int n);
 				/* Reads at most N-1 characters through the
 				 * next newline into S, terminating S with a
 				 * null.  (Like the `fgets()' function.)

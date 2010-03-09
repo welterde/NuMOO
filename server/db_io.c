@@ -36,11 +36,61 @@ dbpriv_set_dbio_input(FILE * f)
     input = f;
 }
 
-void
+
+/* This function is used for reading string data from the database
+* Anything that is stored as a string in the database has a special format.
+* so that \n can be used in strings, in the file,  \n will be replaced
+* with the two-character identifier "\0n"  The string representation in
+* memory will remain unchanged (normal string thingie)
+*
+* Therefore, you can't use fgets here, and we must implement it ourselves
+*/
+
+int
 dbio_read_line(char *s, int n)
 {
-    fgets(s, n, input);
+    int pos, c;
+    
+    for (pos = 0; pos < (n - 1); pos++)
+	{
+            c = fgetc(input);  /* read next char from file */
+            switch (c)
+		{
+		case '\n':
+                    /* We have reached the end of the record, add the \0 and return */
+                    s[pos] = '\n';
+                    s[pos+1] = '\0';
+                    return 0;
+                    break;
+		case EOF:
+                    if (!pos) return -1;
+                    s[pos] = '\0';
+                    return 0;
+                    break;
+		case '\0':
+                    /* Handle the special lil escaping thing */
+                    c = fgetc(input);
+                    switch (c)
+			{
+			case 'n':
+                            s[pos] = '\n';
+                            break;
+			case 'r':
+                            s[pos] = '\r';
+                            break;
+			default:
+                            errlog("DBIO_READ_LINE: Unknown escape character in string at file pos. %ld\n",
+                                   ftell(input));
+                            return -1;
+			}
+                    break;
+		default:
+                    s[pos] = c;
+		}
+	}
+    return 1;
 }
+
 
 int
 dbio_scanf(const char *format,...)
@@ -92,27 +142,31 @@ dbio_read_objid(void)
     return dbio_read_num();
 }
 
+static long int prior_to_read_string;
+
 const char *
 dbio_read_string(void)
 {
     static Stream *str = 0;
     static char buffer[1024];
-    int len, used_stream = 0;
-
+    int len,status=0,used_stream = 0;
+    
+    prior_to_read_string = ftell(input);
+    
     if (str == 0)
 	str = new_stream(1024);
-
-  try_again:
-    fgets(buffer, sizeof(buffer), input);
+    
+ try_again:
+    status = dbio_read_line(buffer, sizeof(buffer));
     len = strlen(buffer);
-    if (len == sizeof(buffer) - 1 && buffer[len - 1] != '\n') {
+    if (len == sizeof(buffer) - 1 && status > 0) {
 	stream_add_string(str, buffer);
 	used_stream = 1;
 	goto try_again;
     }
     if (buffer[len - 1] == '\n')
 	buffer[len - 1] = '\0';
-
+    
     if (used_stream) {
 	stream_add_string(str, buffer);
 	return reset_stream(str);
@@ -291,10 +345,38 @@ dbio_write_objid(Objid oid)
     dbio_write_num(oid);
 }
 
+
 void
 dbio_write_string(const char *s)
 {
-    dbio_printf("%s\n", s ? s : "");
+    int pos;
+    
+    /* Handle null strings */
+    if (!s) {
+        fputc('\n', output);
+        return;
+    }
+    
+    /* Iterate over each character, printing to the file and Escaping as nessecary. */
+    for (pos = 0; s[pos]; pos++)
+	{
+            switch (s[pos])
+		{
+                case '\n':
+                    fputc('\0', output);
+                    fputc('n', output);
+                    break;
+                case '\r':
+                    fputc('\0', output);
+                    fputc('r', output);
+                    break;
+                default:
+                    fputc(s[pos], output);
+		}
+	}
+    fputc('\n', output);
+    
+    /* dbio_printf("%s\n", s ? s : ""); */
 }
 
 void

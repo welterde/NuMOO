@@ -300,20 +300,9 @@ print_to_stream(Var v, Stream * s)
 	break;
     case TYPE_STR:
 	{
-	    const char *str = v.v.str;
-
-	    stream_add_char(s, '"');
-	    while (*str) {
-		switch (*str) {
-		case '"':
-		case '\\':
-		    stream_add_char(s, '\\');
-		    /* fall thru */
-		default:
-		    stream_add_char(s, *str++);
-		}
-	    }
-	    stream_add_char(s, '"');
+            const char *str = string_quote(v.v.str);
+            stream_add_string(s, str);
+            free_str(str);
 	}
 	break;
     case TYPE_LIST:
