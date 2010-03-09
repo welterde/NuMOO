@@ -474,6 +474,109 @@ bf_setremove(Var arglist, Byte next, void *vdata, Objid progr)
 
 
 static package
+bf_enlist(Var arglist, Byte next, void *vdata, Objid progr)
+{	/* Enlist - Make args[1] into a list, if it isn't. */
+    Var r;
+    
+    if(arglist.v.list[1].type != TYPE_LIST) {
+        r = new_list(1);
+        r.v.list[1] = var_ref(arglist.v.list[1]);
+    } else {
+        r = var_ref(arglist.v.list[1]);
+    }
+    free_var(arglist);
+    return make_var_pack(r);
+}
+
+int
+list_iassoc(Var vtarget, Var vlist, int vindex)
+{
+  int i;
+
+  for (i = 1; i <= vlist.v.list[0].v.num; i++) {
+    if (vlist.v.list[i].type == TYPE_LIST &&
+        vlist.v.list[i].v.list[0].v.num >= vindex &&
+        equality(vlist.v.list[i].v.list[vindex], vtarget, 0)) {
+
+      return i;
+    }
+  }
+  return 0;
+}
+
+Var
+list_assoc(Var vtarget, Var vlist, int vindex)
+{
+  int i;
+
+  for (i = 1; i <= vlist.v.list[0].v.num; i++) {
+    if (vlist.v.list[i].type == TYPE_LIST &&
+        vlist.v.list[i].v.list[0].v.num >= vindex &&
+        equality(vlist.v.list[i].v.list[vindex], vtarget, 0)) {
+
+      return var_dup(vlist.v.list[i]);
+    }
+  }
+  return new_list(0);
+}
+
+
+static package
+bf_iassoc(Var arglist, Byte next, void *vdata, Objid progr)
+{
+    Var r;
+    int index = 1;
+    
+    /* if (!is_wizard(progr)) */
+    /* { */
+    /* 	free_var(arglist); */
+    /* 	return make_raise_pack(E_PERM, "Temporarily requires wizperms (Security)", zero); */
+    /* } */
+    
+    r.type = TYPE_INT;
+    if (arglist.v.list[0].v.num == 3)
+        index = arglist.v.list[3].v.num;
+    
+    if (index < 1) {
+        free_var(arglist);
+        return make_error_pack(E_RANGE);
+    }
+    
+    r.v.num = list_iassoc(arglist.v.list[1], arglist.v.list[2], index);
+    
+    free_var(arglist);
+    return make_var_pack(r);
+}
+
+static package
+bf_assoc(Var arglist, Byte next, void *vdata, Objid progr)
+{
+    Var r;
+    int index = 1;
+    
+    /* if (!is_wizard(progr)) */
+    /* { */
+    /* 	free_var(arglist); */
+    /* 	return make_raise_pack(E_PERM, "Temporarily requires wizperms (Security)", zero); */
+    /* } */
+    
+    if (arglist.v.list[0].v.num == 3)
+        index = arglist.v.list[3].v.num;
+    
+    if (index < 1) {
+        free_var(arglist);
+        return make_error_pack(E_RANGE);
+    }
+    
+    r = list_assoc(arglist.v.list[1], arglist.v.list[2], index);
+    
+    free_var(arglist);
+    return make_var_pack(r);
+}
+
+
+
+static package
 bf_listappend(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
@@ -1343,6 +1446,28 @@ bf_decode_chars(Var arglist, Byte next, void *vdata, Objid progr)
     return ok ? make_var_pack(r) : make_error_pack(E_INVARG);
 }
 
+
+Var
+remove_duplicates(Var list)
+{
+    Var	r;
+    int	i;
+    
+    r = new_list(0);
+    for (i = 1; i <= list.v.list[1].v.list[0].v.num; i++)
+        r = setadd(r, var_ref(list.v.list[1].v.list[i]));
+    
+    free_var(list);
+    return r;
+}
+
+static package
+bf_remove_duplicates(Var arglist, Byte next, void *vdata, Objid progr)
+{
+    return make_var_pack(remove_duplicates(arglist));
+}
+
+
 void
 register_list(void)
 {
@@ -1387,4 +1512,9 @@ register_list(void)
 		      TYPE_ANY, TYPE_STR);
     register_function("decode_chars", 2, 3, bf_decode_chars,
 		      TYPE_STR, TYPE_STR, TYPE_ANY);
+    register_function("enlist", 1, 1, bf_enlist, TYPE_ANY);
+    register_function("iassoc", 2, 3, bf_iassoc, TYPE_ANY, TYPE_LIST, TYPE_INT);
+    register_function("assoc", 2, 3, bf_assoc, TYPE_ANY, TYPE_LIST, TYPE_INT);
+    register_function("remove_duplicates", 1, 1, bf_remove_duplicates, TYPE_LIST);
+
 }
