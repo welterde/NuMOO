@@ -107,6 +107,41 @@ free_rt_stack(activation * a)
 	myfree(stack, M_RT_STACK);
 }
 
+
+static int
+isa(Var ob, Var parent)
+{
+  Objid what, targ;
+
+  if (ob.type != TYPE_OBJ || parent.type != TYPE_OBJ)
+    return 0;
+
+
+  what = ob.v.obj;
+  targ = parent.v.obj;
+  
+  while(valid(what)) {
+    if(what == targ) {
+      return 1;
+    }
+    what = db_object_parent(what);
+  }
+  return 0;
+}
+
+static int
+ishandled(Var lhs, Var rhs, int case_matters)
+{
+    int i = 0;
+
+    for (i = 1; i <= rhs.v.list[0].v.num; i++) {
+      if (equality(lhs, rhs.v.list[i], case_matters) || isa(lhs, rhs.v.list[i])) {
+	    return i;
+	}
+    }
+    return 0;
+}
+
 void
 print_error_backtrace(const char *msg, void (*output) (const char *))
 {
@@ -229,7 +264,7 @@ unwind_stack(Finally_Reason why, Var value, enum outcome *outcome)
 
 		for (vv = new_top; vv < a->top_rt_stack; vv += 2) {
 		    if (!found && (vv->type != TYPE_LIST
-				   || ismember(code, *vv, 0))) {
+				   || ishandled(code, *vv, 0))) {
 			found = 1;
 			v = *(vv + 1);
 			if (v.type != TYPE_INT)
@@ -368,7 +403,7 @@ find_handler_activ(Var code)
 	for (v = a->top_rt_stack - 1; v >= a->base_rt_stack; v--)
 	    if (v->type == TYPE_CATCH) {
 		for (vv = v - 2 * v->v.num; vv < v; vv += 2)
-		    if (vv->type != TYPE_LIST || ismember(code, *vv, 0))
+		    if (vv->type != TYPE_LIST || ishandled(code, *vv, 0))
 			return frame;
 		v -= 2 * v->v.num;
 	    }
