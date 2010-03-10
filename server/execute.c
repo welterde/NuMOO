@@ -1177,17 +1177,25 @@ do {    						    	\
 
 		rhs = POP();	/* should be list */
 		lhs = POP();	/* lhs, any type */
-		if (rhs.type != TYPE_LIST) {
-		    free_var(rhs);
-		    free_var(lhs);
-		    PUSH_ERROR(E_TYPE);
-		} else {
+		if (rhs.type == TYPE_LIST) {
 		    ans.type = TYPE_INT;
 		    ans.v.num = ismember(lhs, rhs, 0);
 		    PUSH(ans);
 		    free_var(rhs);
 		    free_var(lhs);
 		}
+		else if (lhs.type == TYPE_STR && rhs.type == TYPE_STR) {
+		  ans.type = TYPE_INT;
+		  ans.v.num = strindex(rhs.v.str, lhs.v.str, 0);
+		  PUSH(ans);
+		  free_var(lhs);
+		  free_var(rhs);
+		} 
+		else {
+		    free_var(rhs);
+		    free_var(lhs);
+		    PUSH_ERROR(E_TYPE);
+		} 
 	    }
 	    break;
 
