@@ -776,6 +776,7 @@ bf_toliteral(Var arglist, Byte next, void *vdata, Objid progr)
 struct pat_cache_entry {
     char *string;
     int case_matters;
+    int dialect;
     Pattern pattern;
     struct pat_cache_entry *next;
 };
@@ -801,7 +802,7 @@ setup_pattern_cache()
 }
 
 static Pattern
-get_pattern(const char *string, int case_matters)
+get_pattern(const char *string, int case_matters, int dialect)
 {
     struct pat_cache_entry *entry, **entry_ptr;
 
@@ -810,7 +811,8 @@ get_pattern(const char *string, int case_matters)
 
     while (1) {
 	if (entry->string && !strcmp(string, entry->string)
-	    && case_matters == entry->case_matters) {
+	    && case_matters == entry->case_matters
+            && dialect == entry->dialect) {
 	    /* A cache hit; move this entry to the front of the cache. */
 	    break;
 	} else if (!entry->next) {
@@ -822,8 +824,9 @@ get_pattern(const char *string, int case_matters)
 		free_str(entry->string);
 		free_pattern(entry->pattern);
 	    }
-	    entry->pattern = new_pattern(string, case_matters);
+	    entry->pattern = new_pattern(string, case_matters, dialect);
 	    entry->case_matters = case_matters;
+            entry->dialect = dialect;
 	    if (!entry->pattern.ptr)
 		entry->string = 0;
 	    else
@@ -844,7 +847,7 @@ get_pattern(const char *string, int case_matters)
 
 #define match_rebase(x) (x == 0 ? 0 : (subject_len - strlen_utf(subject + (x) - 1) + 1))
 Var
-do_match(Var arglist, int reverse)
+do_match(Var arglist, int reverse, int dialect)
 {
     const char *subject, *pattern;
     int i;
@@ -855,8 +858,10 @@ do_match(Var arglist, int reverse)
 
     subject = arglist.v.list[1].v.str;
     pattern = arglist.v.list[2].v.str;
-    pat = get_pattern(pattern, (arglist.v.list[0].v.num == 3
-				&& is_true(arglist.v.list[3])));
+    pat = get_pattern(pattern, 
+                      (arglist.v.list[0].v.num == 3
+                       && is_true(arglist.v.list[3])),
+                      dialect);
 
     if (!pat.ptr) {
 	ans.type = TYPE_ERR;
@@ -898,7 +903,7 @@ bf_match(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var ans;
 
-    ans = do_match(arglist, 0);
+    ans = do_match(arglist, 0, 1);
     free_var(arglist);
     if (ans.type == TYPE_ERR)
 	return make_error_pack(ans.v.err);
@@ -911,7 +916,33 @@ bf_rmatch(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var ans;
 
-    ans = do_match(arglist, 1);
+    ans = do_match(arglist, 1, 1);
+    free_var(arglist);
+    if (ans.type == TYPE_ERR)
+	return make_error_pack(ans.v.err);
+    else
+	return make_var_pack(ans);
+}
+
+static package
+bf_pcre_match(Var arglist, Byte next, void *vdata, Objid progr)
+{
+    Var ans;
+
+    ans = do_match(arglist, 0, 0);
+    free_var(arglist);
+    if (ans.type == TYPE_ERR)
+	return make_error_pack(ans.v.err);
+    else
+	return make_var_pack(ans);
+}
+
+static package
+bf_pcre_rmatch(Var arglist, Byte next, void *vdata, Objid progr)
+{
+    Var ans;
+
+    ans = do_match(arglist, 1, 0);
     free_var(arglist);
     if (ans.type == TYPE_ERR)
 	return make_error_pack(ans.v.err);
@@ -1487,6 +1518,8 @@ register_list(void)
     setup_pattern_cache();
     register_function("match", 2, 3, bf_match, TYPE_STR, TYPE_STR, TYPE_ANY);
     register_function("rmatch", 2, 3, bf_rmatch, TYPE_STR, TYPE_STR, TYPE_ANY);
+    register_function("pcre_match", 2, 3, bf_pcre_match, TYPE_STR, TYPE_STR, TYPE_ANY);
+    register_function("pcre_rmatch", 2, 3, bf_pcre_rmatch, TYPE_STR, TYPE_STR, TYPE_ANY);
     register_function("substitute", 2, 2, bf_substitute, TYPE_STR, TYPE_LIST);
     register_function("crypt", 1, 2, bf_crypt, TYPE_STR, TYPE_STR);
     register_function("index", 2, 3, bf_index, TYPE_STR, TYPE_STR, TYPE_ANY);

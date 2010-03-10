@@ -227,7 +227,7 @@ const char *translate(const char *moopat)
     return reset_stream(s);
 }
 
-Pattern new_pattern(const char *pattern, int case_matters)
+Pattern new_pattern(const char *pattern, int case_matters, int dialect)
 {
     int options = 0;
     const char *error;
@@ -248,7 +248,11 @@ Pattern new_pattern(const char *pattern, int case_matters)
     if (!case_matters)
 	options |= PCRE_CASELESS;
 
-    translated = translate(pattern);
+    if (dialect == 0)
+        translated = pattern;
+    else
+        translated = translate(pattern);
+
 # if DEBUG
     fprintf(stderr, __FILE__ ": \"%s\" => /%s/\n", pattern, translated);
 # endif

@@ -27,8 +27,7 @@
 
 static char *input_db_name, *dump_db_name;
 static int dump_generation = 0;
-static const char *header_format_string
-= "** LambdaMOO Database, Format Version %u **\n";
+static const char *header_format_string = "** LambdaMOO Database, Format Version %u **\n";
 
 DB_Version dbio_input_version;
 
