@@ -1,13 +1,16 @@
-
-CC = gcc -g 
+CC = gcc
 LIBS = ucd/libucd.a -lpcre  -lm -lcrypt 
 YACC = bison -y
 
-# These are pretty insane.
-# CFLAGS = -g -O3 -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wwrite-strings
+# These are kind of insane
+# CFLAGS = -O3 -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -Wwrite-strings
+
+# These are a little more sane.  -O3's aggressive inlining tends to
+# bust the I-cache for the lose.  I need to profile more and see.
+# CFLAGS = -O2 -fomit-frame-pointer -Wall 
 
 # No optimization while we're still in development
-CFLAGS = -g -Wall -W -Wwrite-strings -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
+CFLAGS = -g -Wall
 
 CPPFLAGS = -I. -Iucd 
 LDFLAGS  = 
