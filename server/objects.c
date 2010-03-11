@@ -572,13 +572,22 @@ bf_object_bytes(Var arglist, Byte next, void *vdata, Objid progr)
 static package
 bf_isa(Var arglist, Byte next, void *vdata, Objid progr)  
 {
-    Objid what=arglist.v.list[1].v.obj, targ=arglist.v.list[2].v.obj;
+    Var arg1 = arglist.v.list[1];
+    Objid targ=arglist.v.list[2].v.obj;
+    Objid what;
     Var r;
-    
+
     free_var(arglist);
     r.type = TYPE_INT;
     r.v.num = 0;
     
+    if (arg1.type == TYPE_OBJ)
+        what = arg1.v.obj;
+    else if (arg1.type == TYPE_WAIF)
+        what = arg1.v.waif->class;
+    else
+        return make_error_pack(E_TYPE);
+
     while(valid(what)) {
         if(what == targ) {
             r.v.num = 1;
@@ -615,5 +624,5 @@ register_objects(void)
     register_function_with_read_write("move", 2, 2, bf_move,
 				      bf_move_read, bf_move_write,
 				      TYPE_OBJ, TYPE_OBJ);
-    register_function("isa", 2, 2, bf_isa, TYPE_OBJ, TYPE_OBJ);
+    register_function("isa", 2, 2, bf_isa, TYPE_ANY, TYPE_OBJ);
 }
