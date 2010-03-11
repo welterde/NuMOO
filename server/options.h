@@ -8,7 +8,7 @@
  * panics.  Define LOG_COMMANDS to enable this logging.
  */
 
-/* #define LOG_COMMANDS */
+#define LOG_COMMANDS
 
 /******************************************************************************
  * The server normally forks a separate process to make database checkpoints;
@@ -22,7 +22,7 @@
  * checkpoints.
  */
 
-/* #define UNFORKED_CHECKPOINTS */
+#define UNFORKED_CHECKPOINTS
 
 /******************************************************************************
  * If OUT_OF_BAND_PREFIX is defined as a non-empty string, then any lines of
@@ -72,13 +72,13 @@
  * updated.
  */
 
-#define DEFAULT_MAX_STACK_DEPTH	50
+#define DEFAULT_MAX_STACK_DEPTH	100
 
-#define DEFAULT_FG_TICKS	30000
-#define DEFAULT_BG_TICKS	15000
+#define DEFAULT_FG_TICKS	300000
+#define DEFAULT_BG_TICKS	150000
 
-#define DEFAULT_FG_SECONDS	5
-#define DEFAULT_BG_SECONDS	3
+#define DEFAULT_FG_SECONDS	4
+#define DEFAULT_BG_SECONDS	2
 
 /******************************************************************************
  * Debug settings:
@@ -86,7 +86,7 @@
  * DEBUG_LOG_TRACEBACKS prints all tracebacks to the server log.
  */
 
-#define DEBUG_LOG_TRACEBACKS
+/* #define DEBUG_LOG_TRACEBACKS */
 
 /******************************************************************************
  * NETWORK_PROTOCOL must be defined as one of the following:
@@ -107,13 +107,8 @@
  */
 
 #define NETWORK_PROTOCOL 	NP_TCP
-
 #define DEFAULT_PORT 		7777
 #define DEFAULT_CONNECT_FILE	"/tmp/.MOO-server"
-
-
-
-
 
 /******************************************************************************
  * The built-in MOO function open_network_connection(), when enabled,
@@ -139,7 +134,7 @@
 /* #define OUTBOUND_NETWORK 0 */
 
 /* enable by default, -O disables: */
-/* #define OUTBOUND_NETWORK 1 */
+#define OUTBOUND_NETWORK 1
 
 
 /******************************************************************************
@@ -164,7 +159,7 @@
  *			   accepted by a given listener L.
  */
 
-#define MAX_QUEUED_OUTPUT	65536
+#define MAX_QUEUED_OUTPUT	1048576
 #define MAX_QUEUED_INPUT	MAX_QUEUED_OUTPUT
 #define DEFAULT_CONNECT_TIMEOUT	300
 
@@ -184,7 +179,7 @@
  * number less than 1.
  */
 
-#define PATTERN_CACHE_SIZE	20
+#define PATTERN_CACHE_SIZE	50
 
 /******************************************************************************
  * If you don't plan on using protecting built-in properties (like
@@ -256,7 +251,7 @@
  * work by calling verbs on the waif.
  ******************************************************************************
  */
-/* #define WAIF_DICT */
+#define WAIF_DICT
 
 /*****************************************************************************
  ********** You shouldn't need to change anything below this point. **********
