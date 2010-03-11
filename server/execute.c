@@ -113,12 +113,19 @@ isa(Var ob, Var parent)
 {
   Objid what, targ;
 
-  if (ob.type != TYPE_OBJ || parent.type != TYPE_OBJ)
-    return 0;
-
-
-  what = ob.v.obj;
-  targ = parent.v.obj;
+  if (ob.type == TYPE_OBJ) {
+      what = ob.v.obj;
+  } else if (ob.type == TYPE_WAIF) {
+      what = ob.v.waif->class;
+  } else {
+      return 0;
+  }
+      
+  if (parent.type == TYPE_OBJ) {
+      targ = parent.v.obj;
+  } else {
+      return 0;
+  }
   
   while(valid(what)) {
     if(what == targ) {
