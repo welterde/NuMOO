@@ -75,22 +75,24 @@ virtual_wakeup_call(int signo)
 static void
 stop_timers()
 {
-    struct itimerval itimer, oitimer;
+    alarm(0);
+    signal(SIGALRM, SIG_IGN);
+    signal(SIGALRM, wakeup_call);
 
-    alarm(0);                   /* cancel outstanding alarm */
-    signal(SIGALRM, SIG_IGN);   /* XXX FIXME use sigaction */
-    signal(SIGALRM, wakeup_call); /* XXX FIXME use sigaction */
+    {
+	struct itimerval itimer, oitimer;
 
-    itimer.it_value.tv_sec = 0;
-    itimer.it_value.tv_usec = 0;
-    itimer.it_interval.tv_sec = 0;
-    itimer.it_interval.tv_usec = 0;
-    
-    setitimer(ITIMER_PROF, &itimer, &oitimer);
-    signal(SIGPROF, SIG_IGN); /* XXX FIXME use sigaction */
-    signal(SIGPROF, virtual_wakeup_call); /* XXX FIXME use sigaction */
-    if (virtual_timer)
-        virtual_timer->when = oitimer.it_value.tv_sec;
+	itimer.it_value.tv_sec = 0;
+	itimer.it_value.tv_usec = 0;
+	itimer.it_interval.tv_sec = 0;
+	itimer.it_interval.tv_usec = 0;
+
+	setitimer(ITIMER_VIRTUAL, &itimer, &oitimer);
+	signal(SIGVTALRM, SIG_IGN);
+	signal(SIGVTALRM, virtual_wakeup_call);
+	if (virtual_timer)
+	    virtual_timer->when = oitimer.it_value.tv_sec;
+    }
 }
 
 static void
@@ -99,7 +101,7 @@ restart_timers()
     if (active_timers) {
 	time_t now = time(0);
 
-	signal(SIGALRM, wakeup_call); /* XXX FIXME use sigaction */
+	signal(SIGALRM, wakeup_call);
 
 	if (now < active_timers->when)	/* first timer is in the future */
 	    alarm(active_timers->when - now);
@@ -108,7 +110,7 @@ restart_timers()
     }
 
     if (virtual_timer) {
-	signal(SIGPROF, virtual_wakeup_call); /* XXX FIXME use sigaction */
+	signal(SIGVTALRM, virtual_wakeup_call);
 
 	if (virtual_timer->when > 0) {
 	    struct itimerval itimer;
@@ -118,14 +120,12 @@ restart_timers()
 	    itimer.it_interval.tv_sec = 0;
 	    itimer.it_interval.tv_usec = 0;
 
-	    setitimer(ITIMER_PROF, &itimer, 0);
+	    setitimer(ITIMER_VIRTUAL, &itimer, 0);
 	} else
-	    kill(getpid(), SIGPROF);
+	    kill(getpid(), SIGVTALRM);
     }
 }
 
-/* Real-time timer, used by name lookup, checkpoint scheduling, and
-   connection timeout */
 Timer_ID
 set_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
 {
@@ -150,7 +150,6 @@ set_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
     return this->id;
 }
 
-/* CPU-second timer, used for task timeouts */
 Timer_ID
 set_virtual_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
 {
@@ -176,10 +175,11 @@ timer_wakeup_interval(Timer_ID id)
 {
     Timer_Entry *t;
 
+
     if (virtual_timer && virtual_timer->id == id) {
 	struct itimerval itimer;
 
-	getitimer(ITIMER_PROF, &itimer);
+	getitimer(ITIMER_VIRTUAL, &itimer);
 	return itimer.it_value.tv_sec;
     }
 
@@ -190,8 +190,6 @@ timer_wakeup_interval(Timer_ID id)
     return 0;
 }
 
-/* timer_sleep is only ever used when retrying dumps.  We'd use
-   sleep() but a forked checkpoint could wake it up early */
 void
 timer_sleep(unsigned seconds)
 {
