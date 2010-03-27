@@ -7,11 +7,6 @@
 #include "config.h"
 #include "timers.h"
 
-#if (defined(MACH) && defined(CMU)) || !defined(SIGVTALRM)
-/* Virtual interval timers are broken on Mach 3.0 */
-#  undef ITIMER_VIRTUAL
-#endif
-
 typedef struct Timer_Entry Timer_Entry;
 struct Timer_Entry {
     Timer_Entry *next;
@@ -63,7 +58,6 @@ wakeup_call(int signo)
 }
 
 
-#ifdef ITIMER_VIRTUAL
 static void
 virtual_wakeup_call(int signo)
 {
@@ -77,7 +71,6 @@ virtual_wakeup_call(int signo)
     if (proc)
 	(*proc) (id, data);
 }
-#endif
 
 static void
 stop_timers()
@@ -86,7 +79,6 @@ stop_timers()
     signal(SIGALRM, SIG_IGN);
     signal(SIGALRM, wakeup_call);
 
-#ifdef ITIMER_VIRTUAL
     {
 	struct itimerval itimer, oitimer;
 
@@ -101,7 +93,6 @@ stop_timers()
 	if (virtual_timer)
 	    virtual_timer->when = oitimer.it_value.tv_sec;
     }
-#endif
 }
 
 static void
@@ -117,7 +108,6 @@ restart_timers()
 	else
 	    kill(getpid(), SIGALRM);	/* we're already late... */
     }
-#ifdef ITIMER_VIRTUAL
 
     if (virtual_timer) {
 	signal(SIGVTALRM, virtual_wakeup_call);
@@ -134,7 +124,6 @@ restart_timers()
 	} else
 	    kill(getpid(), SIGVTALRM);
     }
-#endif
 }
 
 Timer_ID
@@ -164,7 +153,6 @@ set_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
 Timer_ID
 set_virtual_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
 {
-#ifdef ITIMER_VIRTUAL
 
     if (virtual_timer)
 	return -1;
@@ -180,22 +168,12 @@ set_virtual_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
     restart_timers();
 
     return virtual_timer->id;
-
-#else				/* !ITIMER_VIRTUAL */
-
-    return set_timer(seconds, proc, data);
-
-#endif
 }
 
 int
 virtual_timer_available()
 {
-#ifdef ITIMER_VIRTUAL
     return 1;
-#else
-    return 0;
-#endif
 }
 
 unsigned
@@ -203,7 +181,6 @@ timer_wakeup_interval(Timer_ID id)
 {
     Timer_Entry *t;
 
-#ifdef ITIMER_VIRTUAL
 
     if (virtual_timer && virtual_timer->id == id) {
 	struct itimerval itimer;
@@ -211,7 +188,6 @@ timer_wakeup_interval(Timer_ID id)
 	getitimer(ITIMER_VIRTUAL, &itimer);
 	return itimer.it_value.tv_sec;
     }
-#endif
 
     for (t = active_timers; t; t = t->next)
 	if (t->id == id)
@@ -261,24 +237,9 @@ cancel_timer(Timer_ID id)
 void
 reenable_timers(void)
 {
-#if HAVE_SIGEMPTYSET
     sigset_t sigs;
-
+    
     sigemptyset(&sigs);
     sigaddset(&sigs, SIGALRM);
     sigprocmask(SIG_UNBLOCK, &sigs, 0);
-#else
-#if HAVE_SIGSETMASK
-    int old_mask = sigsetmask(-1);	/* block everything, get old mask */
-
-    old_mask &= ~sigmask(SIGALRM);	/* clear blocked bit for SIGALRM */
-    sigsetmask(old_mask);	/* reset the signal mask */
-#else
-#if HAVE_SIGRELSE
-    sigrelse(SIGALRM);		/* restore previous signal action */
-#else
-          #error I need some way to stop blocking SIGALRM!
-#endif
-#endif
-#endif
 }
