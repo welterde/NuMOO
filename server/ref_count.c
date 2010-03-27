@@ -135,7 +135,7 @@ ll_delete_value(reftab_entry ** list, const void *p)
 }
 
 static reftab_entry **
-rehash(reftab_entry ** old, reftab_entry ** new)
+rehash(reftab_entry ** old, reftab_entry ** newbie)
 {
     reftab_entry *link, *next;
     int loop;
@@ -144,10 +144,10 @@ rehash(reftab_entry ** old, reftab_entry ** new)
 	for (link = old[loop]; link; link = next) {
 	    int index = key(link->p);
 	    next = link->next;
-	    ll_insert_entry(&new[index], link);
+	    ll_insert_entry(&newbie[index], link);
 	}
     myfree(old, M_REF_TABLE);
-    return new;
+    return newbie;
 }
 
 void

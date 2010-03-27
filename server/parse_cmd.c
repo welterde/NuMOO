@@ -31,14 +31,14 @@ parse_into_words(char *input, int *nwords)
     for (*nwords = 0; *input != '\0'; (*nwords)++) {
 	if (*nwords == max_words) {
 	    int new_max = max_words * 2;
-	    char **new = mymalloc(new_max * sizeof(char *), M_STRING_PTRS);
+	    char **newbie = mymalloc(new_max * sizeof(char *), M_STRING_PTRS);
 	    int i;
 
 	    for (i = 0; i < max_words; i++)
-		new[i] = words[i];
+		newbie[i] = words[i];
 
 	    myfree(words, M_STRING_PTRS);
-	    words = new;
+	    words = newbie;
 	    max_words = new_max;
 	}
 	words[*nwords] = ptr;

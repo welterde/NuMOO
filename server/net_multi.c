@@ -110,18 +110,18 @@ network_register_fd(int fd, network_fd_callback readable,
 	    break;
     if (i >= max_reg_fds) {	/* No free slots */
 	int new_max = 2 * max_reg_fds;
-	fd_reg *new = mymalloc(new_max * sizeof(fd_reg), M_NETWORK);
+	fd_reg *newbie = mymalloc(new_max * sizeof(fd_reg), M_NETWORK);
 
 	for (i = 0; i < new_max; i++)
 	    if (i < max_reg_fds)
-		new[i] = reg_fds[i];
+		newbie[i] = reg_fds[i];
 	    else
-		new[i].fd = -1;
+		newbie[i].fd = -1;
 
 	myfree(reg_fds, M_NETWORK);
 	i = max_reg_fds;	/* first free slot */
 	max_reg_fds = new_max;
-	reg_fds = new;
+	reg_fds = newbie;
     }
     reg_fds[i].fd = fd;
     reg_fds[i].readable = readable;

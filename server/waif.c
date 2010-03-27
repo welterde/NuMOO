@@ -105,7 +105,7 @@ gen_waif_propdefs(Object *o)
 /* Rename a property in a set of propdefs.
  */
 void
-waif_rename_propdef(Object *o, const char *old, const char *new)
+waif_rename_propdef(Object *o, const char *old, const char *newbie)
 {
 	WaifPropdefs *wpd = o->waif_propdefs;
 	int i;
@@ -121,12 +121,12 @@ waif_rename_propdef(Object *o, const char *old, const char *new)
 	 * them to all lose their values.  The Right Thing would be for  XXX
 	 * them to all KEEP the values, but that's not going to be easy! XXX
 	 */
-	if (old[0] == WAIF_PROP_PREFIX && new[0] == WAIF_PROP_PREFIX) {
+	if (old[0] == WAIF_PROP_PREFIX && newbie[0] == WAIF_PROP_PREFIX) {
 		for (i = 0; i < wpd->length; ++i)
 			if (wpd->defs[i].name == old) {
 				free_str(old);
-				wpd->defs[i].name = str_ref(new);
-				wpd->defs[i].hash = str_hash(new);
+				wpd->defs[i].name = str_ref(newbie);
+				wpd->defs[i].hash = str_hash(newbie);
 				return;
 			}
 		panic("waif_rename_propdef(): missing old propdef?");
@@ -308,7 +308,7 @@ static int
 alloc_propval_offset(Waif *w, int idx) 
 {
 	int result = -1;	/* avoid warning */
-	Var *newpv, *old, *new;
+	Var *newpv, *old, *newbie;
 	int i;
 
 	/* assert(idx < N_MAPPABLE_PROPS) */
@@ -319,18 +319,18 @@ alloc_propval_offset(Waif *w, int idx)
 	newpv = alloc_waif_propvals(w, 0);
 
 	old = w->propvals;
-	new = newpv;
+	newbie = newpv;
 	for (i = 0; i < N_MAPPABLE_PROPS; ++i)
 		if (PROP_MAPPED(w->map, i)) {
 			if (i == idx) {
-				new->type = TYPE_CLEAR;
-				result = new - newpv;
-				new++;
+				newbie->type = TYPE_CLEAR;
+				result = newbie - newpv;
+				newbie++;
 			} else
-				 *new++ = *old++;
+				 *newbie++ = *old++;
 		}
 	for (; i < w->propdefs->length; ++i)
-		 *new++ = *old++;
+		 *newbie++ = *old++;
 	if (w->propvals)
 		myfree(w->propvals, M_WAIF_XTRA);
 	w->propvals = newpv;

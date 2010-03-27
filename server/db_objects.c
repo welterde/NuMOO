@@ -57,13 +57,13 @@ ensure_new_object(void)
     }
     if (num_objects >= max_objects) {
 	int i;
-	Object **new;
+	Object **newbie;
 
-	new = mymalloc(max_objects * 2 * sizeof(Object *), M_OBJECT_TABLE);
+	newbie = mymalloc(max_objects * 2 * sizeof(Object *), M_OBJECT_TABLE);
 	for (i = 0; i < max_objects; i++)
-	    new[i] = objects[i];
+	    newbie[i] = objects[i];
 	myfree(objects, M_OBJECT_TABLE);
-	objects = new;
+	objects = newbie;
 	max_objects *= 2;
     }
 }
@@ -166,17 +166,17 @@ db_destroy_object(Objid oid)
 Objid
 db_renumber_object(Objid old)
 {
-    Objid new;
+    Objid newbie;
     Object *o;
 
     db_priv_affected_callable_verb_lookup();
 
-    for (new = 0; new < old; new++) {
-	if (objects[new] == 0) {
+    for (newbie = 0; newbie < old; newbie++) {
+	if (objects[newbie] == 0) {
 	    /* Change the identity of the object. */
-	    o = objects[new] = objects[old];
+	    o = objects[newbie] = objects[old];
 	    objects[old] = 0;
-	    objects[new]->id = new;
+	    objects[newbie]->id = newbie;
 
 	    /* Fix up the parent/children hierarchy */
 	    {
@@ -188,12 +188,12 @@ db_renumber_object(Objid old)
 			oidp = &objects[*oidp]->sibling;
 		    if (*oidp == NOTHING)
 			panic("Object not in parent's children list");
-		    *oidp = new;
+		    *oidp = newbie;
 		}
 		for (oid = o->child;
 		     oid != NOTHING;
 		     oid = objects[oid]->sibling)
-		    objects[oid]->parent = new;
+		    objects[oid]->parent = newbie;
 	    }
 
 	    /* Fix up the location/contents hierarchy */
@@ -206,21 +206,21 @@ db_renumber_object(Objid old)
 			oidp = &objects[*oidp]->next;
 		    if (*oidp == NOTHING)
 			panic("Object not in location's contents list");
-		    *oidp = new;
+		    *oidp = newbie;
 		}
 		for (oid = o->contents;
 		     oid != NOTHING;
 		     oid = objects[oid]->next)
-		    objects[oid]->location = new;
+		    objects[oid]->location = newbie;
 	    }
 
 	    /* Fix up the list of users, if necessary */
-	    if (is_user(new)) {
+	    if (is_user(newbie)) {
 		int i;
 
 		for (i = 1; i <= all_users.v.list[0].v.num; i++)
 		    if (all_users.v.list[i].v.obj == old) {
-			all_users.v.list[i].v.obj = new;
+			all_users.v.list[i].v.obj = newbie;
 			break;
 		    }
 	    }
@@ -237,28 +237,28 @@ db_renumber_object(Objid old)
 		    if (!o)
 			continue;
 
-		    if (o->owner == new)
+		    if (o->owner == newbie)
 			o->owner = NOTHING;
 		    else if (o->owner == old)
-			o->owner = new;
+			o->owner = newbie;
 
 		    for (v = o->verbdefs; v; v = v->next)
-			if (v->owner == new)
+			if (v->owner == newbie)
 			    v->owner = NOTHING;
 			else if (v->owner == old)
-			    v->owner = new;
+			    v->owner = newbie;
 
 		    count = dbpriv_count_properties(oid);
 		    p = o->propval;
 		    for (i = 0; i < count; i++)
-			if (p[i].owner == new)
+			if (p[i].owner == newbie)
 			    p[i].owner = NOTHING;
 			else if (p[i].owner == old)
-			    p[i].owner = new;
+			    p[i].owner = newbie;
 		}
 	    }
 
-	    return new;
+	    return newbie;
 	}
     }
 

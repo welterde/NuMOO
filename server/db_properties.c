@@ -144,19 +144,19 @@ db_add_propdef(Objid oid, const char *pname, Var value, Objid owner,
 }
 
 static void
-rename_prop_recursively(Objid root, const char *old, const char *new)
+rename_prop_recursively(Objid root, const char *old, const char *newbie)
 {
     Objid c;
     Object *o = dbpriv_find_object(root);
 
     if (o->waif_propdefs)
-	waif_rename_propdef(o, old, new);
+	waif_rename_propdef(o, old, newbie);
     for (c = o->child; c != NOTHING; c = dbpriv_find_object(c)->sibling)
-	rename_prop_recursively(c, old, new);
+	rename_prop_recursively(c, old, newbie);
 }
 
 int
-db_rename_propdef(Objid oid, const char *old, const char *new)
+db_rename_propdef(Objid oid, const char *old, const char *newbie)
 {
     Proplist *props = &dbpriv_find_object(oid)->propdefs;
     int hash = str_hash(old);
@@ -169,16 +169,16 @@ db_rename_propdef(Objid oid, const char *old, const char *new)
 
 	p = props->l[i];
 	if (p.hash == hash && !mystrcasecmp(p.name, old)) {
-	    if (mystrcasecmp(old, new) != 0) {	/* Not changing just the case */
-		h = db_find_property(oid, new, 0);
+	    if (mystrcasecmp(old, newbie) != 0) {	/* Not changing just the case */
+		h = db_find_property(oid, newbie, 0);
 		if (h.ptr
-		|| property_defined_at_or_below(new, str_hash(new), oid))
+		|| property_defined_at_or_below(newbie, str_hash(newbie), oid))
 		    return 0;
 	    }
-	    rename_prop_recursively(oid, props->l[i].name, new);
+	    rename_prop_recursively(oid, props->l[i].name, newbie);
 	    free_str(props->l[i].name);
-	    props->l[i].name = str_ref(new);
-	    props->l[i].hash = str_hash(new);
+	    props->l[i].name = str_ref(newbie);
+	    props->l[i].hash = str_hash(newbie);
 
 	    return 1;
 	}
@@ -591,7 +591,7 @@ db_property_allows(db_prop_handle h, Objid progr, db_prop_flag flag)
 }
 
 static void
-fix_props(Objid oid, int parent_local, int old, int new, int common)
+fix_props(Objid oid, int parent_local, int old, int newbie, int common)
 {
     Object *me = dbpriv_find_object(oid);
     Object *parent = dbpriv_find_object(me->parent);
@@ -609,11 +609,11 @@ fix_props(Objid oid, int parent_local, int old, int new, int common)
     for (i = local; i < local + old; i++)
 	free_var(me->propval[i].var);
 
-    if (local + new + common != 0) {
-	new_propval = mymalloc((local + new + common) * sizeof(Pval), M_PVAL);
+    if (local + newbie + common != 0) {
+	new_propval = mymalloc((local + newbie + common) * sizeof(Pval), M_PVAL);
 	for (i = 0; i < local; i++)
 	    new_propval[i] = me->propval[i];
-	for (i = 0; i < new; i++) {
+	for (i = 0; i < newbie; i++) {
 	    Pval pv;
 
 	    pv = parent->propval[parent_local + i];
@@ -623,7 +623,7 @@ fix_props(Objid oid, int parent_local, int old, int new, int common)
 		new_propval[local + i].owner = me->owner;
 	}
 	for (i = 0; i < common; i++)
-	    new_propval[local + new + i] = me->propval[local + old + i];
+	    new_propval[local + newbie + i] = me->propval[local + old + i];
     } else
 	new_propval = 0;
 
@@ -632,7 +632,7 @@ fix_props(Objid oid, int parent_local, int old, int new, int common)
     me->propval = new_propval;
 
     for (c = me->child; c != NOTHING; c = dbpriv_find_object(c)->sibling)
-	fix_props(c, local, old, new, common);
+	fix_props(c, local, old, newbie, common);
 }
 
 int
