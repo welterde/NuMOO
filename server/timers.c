@@ -170,12 +170,6 @@ set_virtual_timer(unsigned seconds, Timer_Proc proc, Timer_Data data)
     return virtual_timer->id;
 }
 
-int
-virtual_timer_available()
-{
-    return 1;
-}
-
 unsigned
 timer_wakeup_interval(Timer_ID id)
 {
