@@ -31,9 +31,9 @@ typedef struct {
     /* waifs mean there can be other values for THIS, and we need a secure
      * way to store it so the verb can't spoof
      */
-    Var THIS;
+    Var THISOBJ;
     /* verb information */
-    Objid this;
+    Objid thisobj;
     Objid player;
     Objid progr;
     Objid vloc;
