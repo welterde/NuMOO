@@ -243,8 +243,8 @@ statement:
     	| tTRY statements excepts tENDTRY
 		{
 		    $$ = alloc_stmt(STMT_TRY_EXCEPT);
-		    $$->s.catch.body = $2;
-		    $$->s.catch.excepts = $3;
+		    $$->s.catchexp.body = $2;
+		    $$->s.catchexp.excepts = $3;
 		}
     	| tTRY statements tFINALLY statements tENDTRY
 		{
@@ -565,9 +565,9 @@ expr:
 	| '`' expr '!' codes default '\''
 		{
 		    $$ = alloc_expr(EXPR_CATCH);
-		    $$->e.catch.try = $2;
-		    $$->e.catch.codes = $4;
-		    $$->e.catch.except = $5;
+		    $$->e.catchexp.tryexp = $2;
+		    $$->e.catchexp.codes = $4;
+		    $$->e.catchexp.except = $5;
 		}
 	;
 

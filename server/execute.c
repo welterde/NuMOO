@@ -116,7 +116,7 @@ isa(Var ob, Var parent)
   if (ob.type == TYPE_OBJ) {
       what = ob.v.obj;
   } else if (ob.type == TYPE_WAIF) {
-      what = ob.v.waif->class;
+      what = ob.v.waif->waifclass;
   } else {
       return 0;
   }
@@ -1017,7 +1017,7 @@ do {    						    	\
 
 #ifdef WAIF_DICT
 		if (list.type == TYPE_WAIF) {
-		    Objid class;
+		    Objid waifclass;
 		    Var args;
 		    enum error err = E_NONE;
 
@@ -1025,14 +1025,14 @@ do {    						    	\
 		    args.v.list[1] = var_ref(index);
 		    args.v.list[2] = var_ref(value);
 
-		    class = list.v.waif->class;
-		    if (!valid(class)) {
+		    waifclass = list.v.waif->waifclass;
+		    if (!valid(waifclass)) {
 			err = E_INVIND;
-		    } else if (!is_wizard(db_object_owner(class))) {
+		    } else if (!is_wizard(db_object_owner(waifclass))) {
 			err = E_TYPE;
 		    } else {
 			STORE_STATE_VARIABLES();
-			err = call_verb2(class, waif_indexset_verb, list, args, 0);
+			err = call_verb2(waifclass, waif_indexset_verb, list, args, 0);
 			if (err == E_VERBNF) {
 			    err = E_TYPE;
 			}
@@ -1373,21 +1373,21 @@ do {    						    	\
 
 #ifdef WAIF_DICT
 		if (list.type == TYPE_WAIF) {
-		    Objid class;
+		    Objid waifclass;
 		    Var args;
 		    enum error err = E_NONE;
 
 		    args = new_list(1);
 		    args.v.list[1] = var_ref(index);
 
-		    class = list.v.waif->class;
-		    if (!valid(class)) {
+		    waifclass = list.v.waif->waifclass;
+		    if (!valid(waifclass)) {
 			err = E_INVIND;
-		    } else if (!is_wizard(db_object_owner(class))) {
+		    } else if (!is_wizard(db_object_owner(waifclass))) {
 			err = E_TYPE;
 		    } else {
 			STORE_STATE_VARIABLES();
-			err = call_verb2(class, waif_index_verb, list, args, 0);
+			err = call_verb2(waifclass, waif_index_verb, list, args, 0);
 			if (err == E_VERBNF) {
 			    err = E_TYPE;
 			}
@@ -1728,7 +1728,7 @@ do {    						    	\
 	    {
 		enum error err = E_NONE;
 		Var args, verb, obj;
-		Objid class;
+		Objid waifclass;
 
 		args = POP();	/* args, should be list */
 		verb = POP();	/* verbname, should be string */
@@ -1736,30 +1736,30 @@ do {    						    	\
 
 		if (verb.type != TYPE_STR || args.type != TYPE_LIST) {
 		    err = E_TYPE;
-		    class = NOTHING;	/* shut up gcc */
+		    waifclass = NOTHING;	/* shut up gcc */
 		} else if (obj.type == TYPE_WAIF) {
 		    char *str = mymalloc(strlen(verb.v.str) + 2, M_STRING);
 
-		    class = obj.v.waif->class;
+		    waifclass = obj.v.waif->waifclass;
 		    str[0] = WAIF_VERB_PREFIX;
 		    strcpy(str + 1, verb.v.str);
 		    free_str(verb.v.str);
 		    verb.v.str = str;
 		} else if (obj.type == TYPE_OBJ) {
-		    class = obj.v.obj;
+		    waifclass = obj.v.obj;
 		    if (verb.v.str[0] == WAIF_VERB_PREFIX)
 			err = E_VERBNF;
 		} else {
 		    err = E_TYPE;
-		    class = NOTHING;	/* shut up gcc */
+		    waifclass = NOTHING;	/* shut up gcc */
 		}
 
-		if (err == E_NONE && !valid(class))
+		if (err == E_NONE && !valid(waifclass))
 		    err = E_INVIND;
 
 		if (err == E_NONE) {
 		    STORE_STATE_VARIABLES();
-		    err = call_verb2(class, verb.v.str, obj, args, 0);
+		    err = call_verb2(waifclass, verb.v.str, obj, args, 0);
 		    /* if there is no error, RUN_ACTIV is now the CALLEE's.
 		       args will be consumed in the new rt_env */
 		    /* if there is an error, then RUN_ACTIV is unchanged, and

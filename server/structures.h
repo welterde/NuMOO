@@ -83,7 +83,7 @@ struct WaifPropdefs;
 #endif
 
 typedef struct Waif {
-	Objid			class;
+	Objid			waifclass;
 	Objid			owner;
 	struct WaifPropdefs	*propdefs;
 	Var			*propvals;

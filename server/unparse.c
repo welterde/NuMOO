@@ -405,7 +405,7 @@ unparse_stmt(Stmt * stmt, int indent)
 	    output(str);
 	    break;
 	case STMT_TRY_EXCEPT:
-	    unparse_stmt_catch(str, stmt->s.catch, indent);
+	    unparse_stmt_catch(str, stmt->s.catchexp, indent);
 	    break;
 	case STMT_TRY_FINALLY:
 	    stream_add_string(str, "try");
@@ -618,15 +618,15 @@ unparse_expr(Stream * str, Expr * expr)
 
     case EXPR_CATCH:
 	stream_add_string(str, "`");
-	unparse_expr(str, expr->e.catch.try);
+	unparse_expr(str, expr->e.catchexp.tryexp);
 	stream_add_string(str, " ! ");
-	if (expr->e.catch.codes)
-	    unparse_arglist(str, expr->e.catch.codes);
+	if (expr->e.catchexp.codes)
+	    unparse_arglist(str, expr->e.catchexp.codes);
 	else
 	    stream_add_string(str, "ANY");
-	if (expr->e.catch.except) {
+	if (expr->e.catchexp.except) {
 	    stream_add_string(str, " => ");
-	    unparse_expr(str, expr->e.catch.except);
+	    unparse_expr(str, expr->e.catchexp.except);
 	}
 	stream_add_string(str, "'");
 	break;

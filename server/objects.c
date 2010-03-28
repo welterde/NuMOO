@@ -584,7 +584,7 @@ bf_isa(Var arglist, Byte next, void *vdata, Objid progr)
     if (arg1.type == TYPE_OBJ)
         what = arg1.v.obj;
     else if (arg1.type == TYPE_WAIF)
-        what = arg1.v.waif->class;
+        what = arg1.v.waif->waifclass;
     else
         return make_error_pack(E_TYPE);
 

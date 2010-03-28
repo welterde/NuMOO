@@ -222,19 +222,19 @@ refers_to(Var target, Var key)
 }
 
 Var
-new_waif(Objid class, Objid owner)
+new_waif(Objid waifclass, Objid owner)
 {
 	Object *classp;
 	Var res;
 	int i;
 
-	classp = dbpriv_find_object(class);
+	classp = dbpriv_find_object(waifclass);
 	if (!classp)
 		panic("new_waif() called with invalid class");
 
 	res.type = TYPE_WAIF;
 	res.v.waif = (Waif *) mymalloc(sizeof(Waif), M_WAIF);
-	res.v.waif->class = class;
+	res.v.waif->waifclass = waifclass;
 	res.v.waif->owner = owner;
 	if (!classp->waif_propdefs)
 		gen_waif_propdefs(classp);
@@ -345,7 +345,7 @@ static void
 update_waif_propdefs(Waif *waif)
 {
 	WaifPropdefs *old;
-	Object *classp = dbpriv_find_object(waif->class);
+	Object *classp = dbpriv_find_object(waif->waifclass);
 	Propdef *a, *a_end, *b, *b_end;
 	Var *xp, *ov;
 	int i, cnt;
@@ -593,12 +593,12 @@ waif_get_prop(Waif *w, const char *name, Var *prop, Objid progr)
 		return E_NONE;
 	} else if (!mystrcasecmp(name, "class")) {
 		prop->type = TYPE_OBJ;
-		prop->v.obj = w->class;
+		prop->v.obj = w->waifclass;
 		return E_NONE;
 	} else if (!mystrcasecmp(name, "wizard")) {
 		*prop = zero;
 		return E_NONE;
-	} else if (!valid(w->class))
+	} else if (!valid(w->waifclass))
 		return E_INVIND;
 
 	/* There doesn't seem to be any way around constructing the
@@ -631,7 +631,7 @@ waif_get_prop(Waif *w, const char *name, Var *prop, Objid progr)
 	 * flags and owner.  Get the value from the class object if
 	 * the waif's value is clear.
 	 */
-	h = db_find_property(w->class, name,
+	h = db_find_property(w->waifclass, name,
 		prop->type == TYPE_CLEAR ? prop : NULL);
 	if (!h.ptr)
 		panic("waif propdef update failed in waif_get_prop");
@@ -667,7 +667,7 @@ waif_put_prop(Waif *w, const char *name, Var val, Objid progr)
 		return E_PERM;
 	else if (!mystrcasecmp(name, "wizard"))
 		return E_PERM;
-	else if (!valid(w->class))
+	else if (!valid(w->waifclass))
 		return E_INVIND;
 
 	/* There doesn't seem to be any way around constructing the
@@ -702,7 +702,7 @@ waif_put_prop(Waif *w, const char *name, Var val, Objid progr)
 	/* If it exists, we have to find the class's def of it to get
 	 * flags and owner.
 	 */
-	h = db_find_property(w->class, name, NULL);
+	h = db_find_property(w->waifclass, name, NULL);
 	if (!h.ptr)
 		panic("waif propdef update failed in waif_put_prop");
 	else if (h.built_in != BP_NONE)
@@ -808,7 +808,7 @@ write_waif(Var v)
 	/* actually write this one!
 	 */
 	dbio_printf("c %d\n", index);
-	dbio_write_objid(w->class);
+	dbio_write_objid(w->waifclass);
 	dbio_write_objid(w->owner);
 
 	/* Write out all of the non-clear properties.  Don't rely on mapsize
@@ -908,7 +908,7 @@ read_waif()
 	res.v.waif = (Waif *) mymalloc(sizeof(Waif), M_WAIF);
 	saved_waifs[waif_count++] = w = res.v.waif;
 	res.v.waif->propdefs = NULL;
-	res.v.waif->class = dbio_read_objid();
+	res.v.waif->waifclass = dbio_read_objid();
 	res.v.waif->owner = dbio_read_objid();
 	for (i = 0; i < WAIF_MAPSZ; ++i)
 		res.v.waif->map[i] = 0;
@@ -967,7 +967,7 @@ waif_after_loading()
 	 */
 	for (i = 0; i < waif_count; ++i) {
 		Waif *w = saved_waifs[i];
-		Object *o = dbpriv_find_object(w->class);
+		Object *o = dbpriv_find_object(w->waifclass);
 
 		if (!o) {
 			/* see count_waif_propvals() for the workaround to

@@ -322,7 +322,7 @@ print_to_stream(Var v, Stream * s)
 	break;
     case TYPE_WAIF:
 	stream_printf(s, "[[class = #%"PRIdN", owner = #%"PRIdN"]]",
-		v.v.waif->class, v.v.waif->owner);
+		v.v.waif->waifclass, v.v.waif->owner);
 	break;
     default:
 	errlog("PRINT_TO_STREAM: Unknown Var type = %d\n", v.type);
