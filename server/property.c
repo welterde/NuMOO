@@ -12,10 +12,10 @@ struct prop_data {
 static int
 add_to_list(void *data, const char *prop_name)
 {
-    struct prop_data *d = data;
+    struct prop_data *d = (struct prop_data *)data;
 
     d->i++;
-    d->r.v.list[d->i].type = TYPE_STR;
+    d->r.v.list[d->i].type = (var_type)TYPE_STR;
     d->r.v.list[d->i].v.str = str_ref(prop_name);
 
     return 0;
@@ -67,9 +67,9 @@ bf_prop_info(Var arglist, Byte next, void *vdata, Objid progr)
 	return make_error_pack(E_PERM);
 
     r = new_list(2);
-    r.v.list[1].type = TYPE_OBJ;
+    r.v.list[1].type = (var_type)TYPE_OBJ;
     r.v.list[1].v.obj = db_property_owner(h);
-    r.v.list[2].type = TYPE_STR;
+    r.v.list[2].type = (var_type)TYPE_STR;
     r.v.list[2].v.str = s = str_dup("xxx");
     flags = db_property_flags(h);
     if (flags & PF_READ)
@@ -250,7 +250,7 @@ bf_clear_prop(Var arglist, Byte next, void *vdata, Objid progr)
 	else if (h.definer == oid)
 	    e = E_INVARG;
 	else {
-	    value.type = TYPE_CLEAR;
+	    value.type = (var_type)TYPE_CLEAR;
 	    db_set_property_value(h, value);
 	    e = E_NONE;
 	}
@@ -281,7 +281,7 @@ bf_is_clear_prop(Var arglist, Byte next, void *vdata, Objid progr)
 	else if (!h.built_in && !db_property_allows(h, progr, PF_READ))
 	    e = E_PERM;
 	else {
-	    r.type = TYPE_INT;
+	    r.type = (var_type)TYPE_INT;
 	    r.v.num = (!h.built_in && db_property_value(h).type == TYPE_CLEAR);
 	    e = E_NONE;
 	}

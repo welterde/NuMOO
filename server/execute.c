@@ -197,7 +197,7 @@ output_to_list(const char *line)
 {
     Var str;
 
-    str.type = TYPE_STR;
+    str.type = (var_type)TYPE_STR;
     str.v.str = str_dup(line);
     backtrace_list = listappend(backtrace_list, str);
 }
@@ -258,7 +258,7 @@ unwind_stack(Finally_Reason why, Var value, enum outcome *outcome)
 	    if (why != FIN_ABORT && v.type == TYPE_FINALLY) {
 		/* FINALLY handler */
 		a->pc = v.v.num;
-		v.type = TYPE_INT;
+		v.type = (var_type)TYPE_INT;
 		v.v.num = why;
 		*(a->top_rt_stack++) = v;
 		*(a->top_rt_stack++) = value;
@@ -340,7 +340,7 @@ unwind_stack(Finally_Reason why, Var value, enum outcome *outcome)
 				*outcome = OUTCOME_BLOCKED;
 			    return 1;
 			} else {
-			    value.type = TYPE_ERR;
+			    value.type = (var_type)TYPE_ERR;
 			    value.v.err = e;
 			    return unwind_stack(FIN_RAISE, value, outcome);
 			}
@@ -441,16 +441,16 @@ make_stack_list(activation * stack, int start, int end, int include_end,
 	if (include_end || i != end) {
 	    v = r.v.list[j++] = new_list(line_numbers_too ? 6 : 5);
 	    v.v.list[1] = var_ref(stack[i].THISOBJ);
-	    v.v.list[2].type = TYPE_STR;
+	    v.v.list[2].type = (var_type)TYPE_STR;
 	    v.v.list[2].v.str = str_ref(stack[i].verb);
-	    v.v.list[3].type = TYPE_OBJ;
+	    v.v.list[3].type = (var_type)TYPE_OBJ;
 	    v.v.list[3].v.obj = stack[i].progr;
-	    v.v.list[4].type = TYPE_OBJ;
+	    v.v.list[4].type = (var_type)TYPE_OBJ;
 	    v.v.list[4].v.obj = stack[i].vloc;
-	    v.v.list[5].type = TYPE_OBJ;
+	    v.v.list[5].type = (var_type)TYPE_OBJ;
 	    v.v.list[5].v.obj = stack[i].player;
 	    if (line_numbers_too) {
-		v.v.list[6].type = TYPE_INT;
+		v.v.list[6].type = (var_type)TYPE_INT;
 		v.v.list[6].v.num = find_line_number(stack[i].prog,
 						     (i == 0 ? root_vector
 						      : MAIN_VECTOR),
@@ -459,18 +459,18 @@ make_stack_list(activation * stack, int start, int end, int include_end,
 	}
 	if (i != start && stack[i].bi_func_pc) {
 	    v = r.v.list[j++] = new_list(line_numbers_too ? 6 : 5);
-	    v.v.list[1].type = TYPE_OBJ;
+	    v.v.list[1].type = (var_type)TYPE_OBJ;
 	    v.v.list[1].v.obj = NOTHING;
-	    v.v.list[2].type = TYPE_STR;
+	    v.v.list[2].type = (var_type)TYPE_STR;
 	    v.v.list[2].v.str = str_dup(name_func_by_num(stack[i].bi_func_id));
-	    v.v.list[3].type = TYPE_OBJ;
+	    v.v.list[3].type = (var_type)TYPE_OBJ;
 	    v.v.list[3].v.obj = NOTHING;
-	    v.v.list[4].type = TYPE_OBJ;
+	    v.v.list[4].type = (var_type)TYPE_OBJ;
 	    v.v.list[4].v.obj = NOTHING;
-	    v.v.list[5].type = TYPE_OBJ;
+	    v.v.list[5].type = (var_type)TYPE_OBJ;
 	    v.v.list[5].v.obj = stack[i].player;
 	    if (line_numbers_too) {
-		v.v.list[6].type = TYPE_INT;
+		v.v.list[6].type = (var_type)TYPE_INT;
 		v.v.list[6].v.num = stack[i].bi_func_pc;
 	    }
 	}
@@ -505,7 +505,7 @@ raise_error(package p, enum outcome *outcome)
 	handler_activ = 0;	/* get entire stack in list */
     }
     value.v.list[1] = p.u.raise.code;
-    value.v.list[2].type = TYPE_STR;
+    value.v.list[2].type = (var_type)TYPE_STR;
     value.v.list[2].v.str = p.u.raise.msg;
     value.v.list[3] = p.u.raise.value;
     value.v.list[4] = make_stack_list(activ_stack, handler_activ,
@@ -527,7 +527,7 @@ abort_task(int is_ticks)
 		       : "Task ran out of seconds");
 
     value = new_list(3);
-    value.v.list[1].type = TYPE_STR;
+    value.v.list[1].type = (var_type)TYPE_STR;
     value.v.list[1].v.str = str_dup(is_ticks ? "ticks" : "seconds");
     value.v.list[2] = make_stack_list(activ_stack, 0, top_activ_stack, 1,
 				      root_activ_vector, 1);
@@ -587,7 +587,7 @@ call_verb(Objid thisobj, const char *vname_in, Var args, int do_pass)
     enum error result;
     Var THISOBJ;
 
-    THISOBJ.type = TYPE_OBJ;
+    THISOBJ.type = (var_type)TYPE_OBJ;
     THISOBJ.v.obj = thisobj;
     result = call_verb2(thisobj, vname, THISOBJ, args, do_pass);
     /* call_verb2 got any refs it wanted */
@@ -645,7 +645,7 @@ call_verb2(Objid thisobj, const char *vname, Var THISOBJ, Var args, int do_pass)
     RUN_ACTIV.pc = 0;
     RUN_ACTIV.error_pc = 0;
     RUN_ACTIV.bi_func_pc = 0;
-    RUN_ACTIV.temp.type = TYPE_NONE;
+    RUN_ACTIV.temp.type = (var_type)TYPE_NONE;
 
     RUN_ACTIV.rt_env = env = new_rt_env(RUN_ACTIV.prog->num_var_names);
 
@@ -673,7 +673,7 @@ call_verb2(Objid thisobj, const char *vname, Var THISOBJ, Var args, int do_pass)
 
 #undef ENV_COPY
 
-    v.type = TYPE_STR;
+    v.type = (var_type)TYPE_STR;
     if (vname[0] == WAIF_VERB_PREFIX)
 	v.v.str = str_dup(vname + 1);
     else
@@ -815,7 +815,7 @@ do {						\
 #define PUSH_ERROR(the_err)                                     \
 do {    						    	\
     RAISE_ERROR(the_err);	/* may not return */		\
-    error_var.type = TYPE_ERR;					\
+    error_var.type = (var_type)TYPE_ERR;					\
     error_var.v.err = the_err;					\
     PUSH(error_var);						\
 } while (0)
@@ -833,7 +833,7 @@ do {    						    	\
     for (;;) {
       next_opcode:
 	error_bv = bv;
-	op = *bv++;
+	op = (Opcode)*bv++;
 
 	if (COUNT_TICK(op)) {
 	    if (--ticks_remaining <= 0) {
@@ -1122,7 +1122,7 @@ do {    						    	\
 
 	case OP_PUSH_TEMP:
 	    PUSH(RUN_ACTIV.temp);
-	    RUN_ACTIV.temp.type = TYPE_NONE;
+	    RUN_ACTIV.temp.type = (var_type)TYPE_NONE;
 	    break;
 
 	case OP_EQ:
@@ -1132,7 +1132,7 @@ do {    						    	\
 
 		rhs = POP();
 		lhs = POP();
-		ans.type = TYPE_INT;
+		ans.type = (var_type)TYPE_INT;
 		ans.v.num = (op == OP_EQ
 			     ? equality(rhs, lhs, 0)
 			     : !equality(rhs, lhs, 0));
@@ -1188,7 +1188,7 @@ do {    						    	\
 		    }
 
 		  finish_comparison:
-		    ans.type = TYPE_INT;
+		    ans.type = (var_type)TYPE_INT;
 		    switch (op) {
 		    case OP_LT:
 			ans.v.num = (comparison < 0);
@@ -1220,14 +1220,14 @@ do {    						    	\
 		rhs = POP();	/* should be list */
 		lhs = POP();	/* lhs, any type */
 		if (rhs.type == TYPE_LIST) {
-		    ans.type = TYPE_INT;
+		    ans.type = (var_type)TYPE_INT;
 		    ans.v.num = ismember(lhs, rhs, 0);
 		    PUSH(ans);
 		    free_var(rhs);
 		    free_var(lhs);
 		}
 		else if (lhs.type == TYPE_STR && rhs.type == TYPE_STR) {
-		  ans.type = TYPE_INT;
+		  ans.type = (var_type)TYPE_INT;
 		  ans.v.num = strindex(rhs.v.str, lhs.v.str, 0);
 		  PUSH(ans);
 		  free_var(lhs);
@@ -1270,7 +1270,7 @@ do {    						    	\
 			break;
 		    }
 		} else {
-		    ans.type = TYPE_ERR;
+		    ans.type = (var_type)TYPE_ERR;
 		    ans.v.err = E_TYPE;
 		}
 		free_var(rhs);
@@ -1295,13 +1295,13 @@ do {    						    	\
 		    char *str;
 		    int llen = memo_strlen(lhs.v.str);
 
-		    str = mymalloc(llen + memo_strlen(rhs.v.str) + 1, M_STRING);
+		    str = (char *)mymalloc(llen + memo_strlen(rhs.v.str) + 1, M_STRING);
 		    strcpy(str, lhs.v.str);
 		    strcpy(str + llen, rhs.v.str);
-		    ans.type = TYPE_STR;
+		    ans.type = (var_type)TYPE_STR;
 		    ans.v.str = str;
 		} else {
-		    ans.type = TYPE_ERR;
+		    ans.type = (var_type)TYPE_ERR;
 		    ans.v.err = E_TYPE;
 		}
 		free_var(rhs);
@@ -1335,7 +1335,7 @@ do {    						    	\
 		Var arg, ans;
 
 		arg = POP();
-		ans.type = TYPE_INT;
+		ans.type = (var_type)TYPE_INT;
 		ans.v.num = !is_true(arg);
 		PUSH(ans);
 		free_var(arg);
@@ -1348,10 +1348,10 @@ do {    						    	\
 
 		arg = POP();
 		if (arg.type == TYPE_INT) {
-		    ans.type = TYPE_INT;
+		    ans.type = (var_type)TYPE_INT;
 		    ans.v.num = -arg.v.num;
 		} else if (arg.type == TYPE_FLOAT) {
-		    ans.type = TYPE_FLOAT;
+		    ans.type = (var_type)TYPE_FLOAT;
 		    ans.v.fnum = -arg.v.fnum;
 		} else {
 		    free_var(arg);
@@ -1738,7 +1738,7 @@ do {    						    	\
 		    err = E_TYPE;
 		    waifclass = NOTHING;	/* shut up gcc */
 		} else if (obj.type == TYPE_WAIF) {
-		    char *str = mymalloc(strlen(verb.v.str) + 2, M_STRING);
+		    char *str = (char *)mymalloc(strlen(verb.v.str) + 2, M_STRING);
 
 		    waifclass = obj.v.waif->waifclass;
 		    str[0] = WAIF_VERB_PREFIX;
@@ -1861,7 +1861,7 @@ do {    						    	\
 
 	case OP_EXTENDED:
 	    {
-		register enum Extended_Opcode eop = *bv;
+		register enum Extended_Opcode eop = (Extended_Opcode)*bv;
 		bv++;
 		if (COUNT_EOP_TICK(eop))
 		    ticks_remaining--;
@@ -1905,7 +1905,7 @@ do {    						    	\
 			unsigned i = READ_BYTES(bv, bc.numbytes_stack);
 			Var item, v;
 
-			v.type = TYPE_INT;
+			v.type = (var_type)TYPE_INT;
 			item = RUN_ACTIV.base_rt_stack[i];
 			if (item.type == TYPE_STR) {
 			    v.v.num = strlen_utf(item.v.str);
@@ -2016,7 +2016,7 @@ do {    						    	\
 		    {
 			Var v;
 
-			v.type = TYPE_CATCH;
+			v.type = (var_type)TYPE_CATCH;
 			v.v.num = (eop == EOP_CATCH ? 1 : READ_BYTES(bv, 1));
 			PUSH(v);
 		    }
@@ -2055,7 +2055,7 @@ do {    						    	\
 			v = POP();
 			if (v.type != TYPE_FINALLY)
 			    panic("Stack marker is not TYPE_FINALLY!");
-			why.type = TYPE_INT;
+			why.type = (var_type)TYPE_INT;
 			why.v.num = FIN_FALL_THRU;
 			PUSH(why);
 			PUSH(zero);
@@ -2077,7 +2077,7 @@ do {    						    	\
 			case FIN_RETURN:
 			case FIN_UNCAUGHT:
 			    STORE_STATE_VARIABLES();
-			    if (unwind_stack(why.v.num, v, &outcome))
+			    if (unwind_stack((Finally_Reason)why.v.num, v, &outcome))
 				return outcome;
 			    LOAD_STATE_VARIABLES();
 			    break;
@@ -2103,9 +2103,9 @@ do {    						    	\
 			Var v;
 
 			v = new_list(2);
-			v.v.list[1].type = TYPE_INT;
+			v.v.list[1].type = (var_type)TYPE_INT;
 			v.v.list[1].v.num = READ_BYTES(bv, bc.numbytes_stack);
-			v.v.list[2].type = TYPE_INT;
+			v.v.list[2].type = (var_type)TYPE_INT;
 			v.v.list[2].v.num = READ_BYTES(bv, bc.numbytes_label);
 			STORE_STATE_VARIABLES();
 			unwind_stack(FIN_EXIT, v, 0);
@@ -2211,7 +2211,7 @@ do {    						    	\
 		    PUSH_ERROR(E_VARNF);
 		} else {
 		    PUSH(*vp);
-		    vp->type = TYPE_NONE;
+		    vp->type = (var_type)TYPE_NONE;
 		}
 	    }
 	    break;
@@ -2263,7 +2263,7 @@ do {    						    	\
 	default:
 	    if (IS_OPTIM_NUM_OPCODE(op)) {
 		Var value;
-		value.type = TYPE_INT;
+		value.type = (var_type)TYPE_INT;
 		value.v.num = OPCODE_TO_OPTIM_NUM(op);
 		PUSH(value);
 	    } else
@@ -2406,7 +2406,7 @@ do_task(Program * prog, int which_vector, Var * result, int is_fg, int do_db_tra
     RUN_ACTIV.pc = 0;
     RUN_ACTIV.error_pc = 0;
     RUN_ACTIV.bi_func_pc = 0;
-    RUN_ACTIV.temp.type = TYPE_NONE;
+    RUN_ACTIV.temp.type = (var_type)TYPE_NONE;
 
     return run_interpreter(0, E_NONE, result, is_fg, do_db_tracebacks);
 }
@@ -2464,7 +2464,7 @@ do_server_program_task(Objid thisobj, const char *verb, Var args, Objid vloc,
 
     RUN_ACTIV.rt_env = env = new_rt_env(program->num_var_names);
     RUN_ACTIV.thisobj = thisobj;
-    RUN_ACTIV.THISOBJ.type = TYPE_OBJ;
+    RUN_ACTIV.THISOBJ.type = (var_type)TYPE_OBJ;
     RUN_ACTIV.THISOBJ.v.obj = thisobj;
     RUN_ACTIV.player = player;
     RUN_ACTIV.progr = progr;
@@ -2499,7 +2499,7 @@ do_input_task(Objid user, Parsed_Command * pc, Objid thisobj, db_verb_handle vh)
 
     RUN_ACTIV.rt_env = env = new_rt_env(prog->num_var_names);
     RUN_ACTIV.thisobj = thisobj;
-    RUN_ACTIV.THISOBJ.type = TYPE_OBJ;
+    RUN_ACTIV.THISOBJ.type = (var_type)TYPE_OBJ;
     RUN_ACTIV.THISOBJ.v.obj = thisobj;
     RUN_ACTIV.player = user;
     RUN_ACTIV.progr = db_verb_owner(vh);
@@ -2561,7 +2561,7 @@ setup_activ_for_eval(Program * prog)
     set_rt_env_var(env, SLOT_ARGS, new_list(0));
 
     RUN_ACTIV.thisobj = NOTHING;
-    RUN_ACTIV.THISOBJ.type = TYPE_OBJ;
+    RUN_ACTIV.THISOBJ.type = (var_type)TYPE_OBJ;
     RUN_ACTIV.THISOBJ.v.obj = NOTHING;
     RUN_ACTIV.player = CALLER_ACTIV.player;
     RUN_ACTIV.progr = CALLER_ACTIV.progr;
@@ -2572,7 +2572,7 @@ setup_activ_for_eval(Program * prog)
     alloc_rt_stack(&RUN_ACTIV, RUN_ACTIV.prog->main_vector.max_stack);
     RUN_ACTIV.pc = 0;
     RUN_ACTIV.error_pc = 0;
-    RUN_ACTIV.temp.type = TYPE_NONE;
+    RUN_ACTIV.temp.type = (var_type)TYPE_NONE;
 
     return 1;
 }
@@ -2604,14 +2604,14 @@ bf_call_function(Var arglist, Byte next, void *vdata, Objid progr)
 	    p = call_bi_func(fnum, arglist, next, progr, vdata);
 	}
     } else {			/* return to function */
-	s = vdata;
+	s = (struct cf_state*)vdata;
 	fnum = s->fnum;
 	p = call_bi_func(fnum, arglist, next, progr, s->data);
 	free_data(s);
     }
 
     if (p.kind == BI_CALL) {
-	s = alloc_data(sizeof(struct cf_state));
+	s = (struct cf_state*)alloc_data(sizeof(struct cf_state));
 	s->fnum = fnum;
 	s->data = p.u.call.data;
 	p.u.call.data = s;
@@ -2622,7 +2622,7 @@ bf_call_function(Var arglist, Byte next, void *vdata, Objid progr)
 static void
 bf_call_function_write(void *data)
 {
-    struct cf_state *s = data;
+    struct cf_state *s = (struct cf_state*)data;
 
     dbio_printf("bf_call_function data: fname = %s\n",
 		name_func_by_num(s->fnum));
@@ -2632,7 +2632,7 @@ bf_call_function_write(void *data)
 static void *
 bf_call_function_read(void)
 {
-    struct cf_state *s = alloc_data(sizeof(struct cf_state));
+    struct cf_state *s = (struct cf_state*)alloc_data(sizeof(struct cf_state));
     const char *line = dbio_read_string();
     const char *hdr = "bf_call_function data: fname = ";
     int hlen = strlen(hdr);
@@ -2734,7 +2734,7 @@ static package
 bf_seconds_left(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = timer_wakeup_interval(task_alarm_id);
     free_var(arglist);
     return make_var_pack(r);
@@ -2744,7 +2744,7 @@ static package
 bf_ticks_left(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = ticks_remaining;
     free_var(arglist);
     return make_var_pack(r);
@@ -2782,7 +2782,7 @@ static package
 bf_caller_perms(Var arglist, Byte next, void *vdata, Objid progr)
 {				/* () */
     Var r;
-    r.type = TYPE_OBJ;
+    r.type = (var_type)TYPE_OBJ;
     if (top_activ_stack == 0)
 	r.v.obj = NOTHING;
     else
@@ -2895,7 +2895,7 @@ read_activ_as_pi(activation * a)
     case TYPE_OBJ:
 	break;
     default:
-	T.type = TYPE_OBJ;
+	T.type = (var_type)TYPE_OBJ;
 	T.v.obj = a->thisobj;
 	break;
     }
@@ -3033,7 +3033,7 @@ read_activ(activation * a, int which_vector)
     else if (dbio_scanf("language version %u\n", &v) != 1) {
 	errlog("READ_ACTIV: Malformed language version\n");
 	return 0;
-    } else if (version = v, !check_version(version)) {
+    } else if (version = (DB_Version)v, !check_version(version)) {
 	errlog("READ_ACTIV: Unrecognized language version: %d\n",
 	       version);
 	return 0;

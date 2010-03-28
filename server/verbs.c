@@ -24,10 +24,10 @@ struct verb_data {
 static int
 add_to_list(void *data, const char *verb_name)
 {
-    struct verb_data *d = data;
+    struct verb_data *d = (struct verb_data *)data;
 
     d->i++;
-    d->r.v.list[d->i].type = TYPE_STR;
+    d->r.v.list[d->i].type = (var_type)TYPE_STR;
     d->r.v.list[d->i].v.str = str_ref(verb_name);
 
     return 0;
@@ -179,7 +179,7 @@ bf_add_verb(Var arglist, Byte next, void *vdata, Objid progr)
 	free_str(names);
 	e = E_PERM;
     } else {
-	result.type = TYPE_INT;
+	result.type = (var_type)TYPE_INT;
 	result.v.num = db_add_verb(oid, names, owner, flags, dobj, prep, iobj);
     }
 
@@ -268,9 +268,9 @@ bf_verb_info(Var arglist, Byte next, void *vdata, Objid progr)
 	return make_error_pack(E_PERM);
 
     r = new_list(3);
-    r.v.list[1].type = TYPE_OBJ;
+    r.v.list[1].type = (var_type)TYPE_OBJ;
     r.v.list[1].v.obj = db_verb_owner(h);
-    r.v.list[2].type = TYPE_STR;
+    r.v.list[2].type = (var_type)TYPE_STR;
     r.v.list[2].v.str = s = str_dup("xxxx");
     flags = db_verb_flags(h);
     if (flags & VF_READ)
@@ -282,7 +282,7 @@ bf_verb_info(Var arglist, Byte next, void *vdata, Objid progr)
     if (flags & VF_DEBUG)
 	*s++ = 'd';
     *s = '\0';
-    r.v.list[3].type = TYPE_STR;
+    r.v.list[3].type = (var_type)TYPE_STR;
     r.v.list[3].v.str = str_ref(db_verb_names(h));
 
     return make_var_pack(r);
@@ -370,11 +370,11 @@ bf_verb_args(Var arglist, Byte next, void *vdata, Objid progr)
 
     db_verb_arg_specs(h, &dobj, &prep, &iobj);
     r = new_list(3);
-    r.v.list[1].type = TYPE_STR;
+    r.v.list[1].type = (var_type)TYPE_STR;
     r.v.list[1].v.str = unparse_arg_spec(dobj);
-    r.v.list[2].type = TYPE_STR;
+    r.v.list[2].type = (var_type)TYPE_STR;
     r.v.list[2].v.str = str_dup(db_unparse_prep(prep));
-    r.v.list[3].type = TYPE_STR;
+    r.v.list[3].type = (var_type)TYPE_STR;
     r.v.list[3].v.str = unparse_arg_spec(iobj);
 
     return make_var_pack(r);
@@ -420,7 +420,7 @@ lister(void *data, const char *line)
     Var *r = (Var *) data;
     Var v;
 
-    v.type = TYPE_STR;
+    v.type = (var_type)TYPE_STR;
     v.v.str = str_dup(line);
     *r = listappend(*r, v);
 }
@@ -524,7 +524,7 @@ bf_eval(Var arglist, Byte next, void *data, Objid progr)
 		Var r;
 
 		r = new_list(2);
-		r.v.list[1].type = TYPE_INT;
+		r.v.list[1].type = (var_type)TYPE_INT;
 		r.v.list[1].v.num = 0;
 		r.v.list[2] = errors;
 		p = make_var_pack(r);
@@ -534,7 +534,7 @@ bf_eval(Var arglist, Byte next, void *data, Objid progr)
 	Var r;
 
 	r = new_list(2);
-	r.v.list[1].type = TYPE_INT;
+	r.v.list[1].type = (var_type)TYPE_INT;
 	r.v.list[1].v.num = 1;
 	r.v.list[2] = arglist;
 	p = make_var_pack(r);

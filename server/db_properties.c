@@ -68,7 +68,7 @@ insert_prop(Objid oid, int pos, Pval pval)
 
     o = dbpriv_find_object(oid);
 
-    free_waif_propdefs(o->waif_propdefs);
+    free_waif_propdefs((WaifPropdefs*)o->waif_propdefs);
     o->waif_propdefs = NULL;
 
     for (i = 0; i < pos; i++)
@@ -197,7 +197,7 @@ remove_prop(Objid oid, int pos)
     o = dbpriv_find_object(oid);
     nprops = dbpriv_count_properties(oid);
 
-    free_waif_propdefs(o->waif_propdefs);
+    free_waif_propdefs((WaifPropdefs*)o->waif_propdefs);
     o->waif_propdefs = NULL;
 
     free_var(o->propval[pos].var);	/* free deleted property */
@@ -304,7 +304,7 @@ struct contents_data {
 static int
 add_to_list(void *data, Objid c)
 {
-    struct contents_data *d = data;
+    struct contents_data *d = (struct contents_data *)data;
 
     d->i++;
     d->r.v.list[d->i].type = TYPE_OBJ;
@@ -320,7 +320,7 @@ get_bi_value(db_prop_handle h, Var * value)
 
     switch (h.built_in) {
     case BP_NAME:
-	value->type = TYPE_STR;
+	value->type = (var_type)TYPE_STR;
 	value->v.str = str_ref(db_object_name(oid));
 	break;
     case BP_OWNER:
@@ -442,7 +442,8 @@ db_find_property(Objid oid, const char *name, Var * value)
 
 		h.definer = o->id;
 		o = dbpriv_find_object(oid);
-		prop = h.ptr = o->propval + n;
+                h.ptr = o->propval + n;
+		prop = (Pval *)h.ptr;
 
 		if (value) {
 		    while (prop->var.type == TYPE_CLEAR) {
@@ -469,7 +470,7 @@ db_property_value(db_prop_handle h)
     if (h.built_in)
 	get_bi_value(h, &value);
     else {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	value = prop->var;
     }
@@ -481,7 +482,7 @@ void
 db_set_property_value(db_prop_handle h, Var value)
 {
     if (!h.built_in) {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	free_var(prop->var);
 	prop->var = value;
@@ -539,7 +540,7 @@ db_property_owner(db_prop_handle h)
 	panic("Built-in property in DB_PROPERTY_OWNER!");
 	return NOTHING;
     } else {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	return prop->owner;
     }
@@ -551,7 +552,7 @@ db_set_property_owner(db_prop_handle h, Objid oid)
     if (h.built_in)
 	panic("Built-in property in DB_SET_PROPERTY_OWNER!");
     else {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	prop->owner = oid;
     }
@@ -564,7 +565,7 @@ db_property_flags(db_prop_handle h)
 	panic("Built-in property in DB_PROPERTY_FLAGS!");
 	return 0;
     } else {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	return prop->perms;
     }
@@ -576,7 +577,7 @@ db_set_property_flags(db_prop_handle h, unsigned flags)
     if (h.built_in)
 	panic("Built-in property in DB_SET_PROPERTY_FLAGS!");
     else {
-	Pval *prop = h.ptr;
+	Pval *prop = (Pval *)h.ptr;
 
 	prop->perms = flags;
     }
@@ -601,7 +602,7 @@ fix_props(Objid oid, int parent_local, int old, int newbie, int common)
     Objid c;
 
     /* This will invalidate waif_propdefs */
-    free_waif_propdefs(me->waif_propdefs);
+    free_waif_propdefs((WaifPropdefs*)me->waif_propdefs);
     me->waif_propdefs = NULL;
 
     local += me->propdefs.cur_length;

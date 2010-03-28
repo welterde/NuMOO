@@ -272,7 +272,7 @@ Pattern new_pattern(const char *pattern, int case_matters, int dialect)
     if (code) {
 	pcre_extra *extra;
 
-	regexp = mymalloc(sizeof(*regexp), M_PATTERN);
+	regexp = (regexp_t *)mymalloc(sizeof(*regexp), M_PATTERN);
 	regexp->code = code;
 
 	/*
@@ -287,7 +287,7 @@ Pattern new_pattern(const char *pattern, int case_matters, int dialect)
 # endif	    
 
 	if (!extra) {
-	    extra = pcre_malloc(sizeof(*extra));
+	    extra = (pcre_extra *)pcre_malloc(sizeof(*extra));
 	    if (!extra)
 		panic("pcre_malloc() failed");
 
@@ -311,7 +311,7 @@ Pattern new_pattern(const char *pattern, int case_matters, int dialect)
 static
 int rmatch_callout(pcre_callout_block *block)
 {
-    rmatch_data_t *rmatch = block->callout_data;
+    rmatch_data_t *rmatch = (rmatch_data_t *)block->callout_data;
 
     if (!rmatch->valid || block->current_position > rmatch->ovec[1] ||
 	(block->current_position == rmatch->ovec[1] &&
@@ -333,7 +333,7 @@ int rmatch_callout(pcre_callout_block *block)
 Match_Result match_pattern(Pattern p, const char *string,
 			   Match_Indices *indices, int is_reverse)
 {
-    regexp_t *regexp = p.ptr;
+    regexp_t *regexp = (regexp_t *)p.ptr;
     pcre_extra *extra = regexp->extra;
     int rc, options = 0;
     int ovec[10 * 3];  /* N.B. PCRE needs the top 1/3 for internal use */
@@ -398,7 +398,7 @@ Match_Result match_pattern(Pattern p, const char *string,
 
 void free_pattern(Pattern p)
 {
-    regexp_t *regexp = p.ptr;
+    regexp_t *regexp = (regexp_t *)p.ptr;
 
     if (regexp) {
 	pcre_free(regexp->extra);

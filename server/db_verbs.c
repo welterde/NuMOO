@@ -141,7 +141,7 @@ db_match_prep(const char *prepname)
     first = s[0];
     if (first == '#')
 	first = (++s)[0];
-    prep = strtol(s, &ptr, 10);
+    prep = (db_prep_spec)strtol(s, &ptr, 10);
     if (*ptr == '\0') {
 	free_str(s);
 	if (!isdigit(first) || prep >= NPREPS)
@@ -288,8 +288,8 @@ db_find_command_verb(Objid oid, const char *verb,
 
     for (o = dbpriv_find_object(oid); o; o = dbpriv_find_object(o->parent))
 	for (v = o->verbdefs; v; v = v->next) {
-	    db_arg_spec vdobj = (v->perms >> DOBJSHIFT) & OBJMASK;
-	    db_arg_spec viobj = (v->perms >> IOBJSHIFT) & OBJMASK;
+	    db_arg_spec vdobj = (db_arg_spec)((v->perms >> DOBJSHIFT) & OBJMASK);
+	    db_arg_spec viobj = (db_arg_spec)((v->perms >> IOBJSHIFT) & OBJMASK);
 
 	    if (verbcasecmp(v->name, verb)
 		&& (vdobj == ASPEC_ANY || vdobj == dobj)
@@ -707,9 +707,9 @@ db_verb_arg_specs(db_verb_handle vh,
     handle *h = (handle *) vh.ptr;
 
     if (h) {
-	*dobj = (h->verbdef->perms >> DOBJSHIFT) & OBJMASK;
-	*prep = h->verbdef->prep;
-	*iobj = (h->verbdef->perms >> IOBJSHIFT) & OBJMASK;
+	*dobj = (db_arg_spec)((h->verbdef->perms >> DOBJSHIFT) & OBJMASK);
+	*prep = (db_prep_spec)h->verbdef->prep;
+	*iobj = (db_arg_spec)((h->verbdef->perms >> IOBJSHIFT) & OBJMASK);
     } else
 	panic("DB_VERB_ARG_SPECS: Null handle!");
 }

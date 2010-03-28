@@ -208,10 +208,10 @@ compare_numbers(Var a, Var b)
     Var ans;
 
     if (a.type != b.type) {
-	ans.type = TYPE_ERR;
+	ans.type = (var_type)TYPE_ERR;
 	ans.v.err = E_TYPE;
     } else if (a.type == TYPE_INT) {
-	ans.type = TYPE_INT;
+	ans.type = (var_type)TYPE_INT;
 	if (a.v.num < b.v.num)
 	    ans.v.num = -1;
 	else if (a.v.num > b.v.num)
@@ -219,7 +219,7 @@ compare_numbers(Var a, Var b)
 	else
 	    ans.v.num = 0;
     } else {
-	ans.type = TYPE_INT;
+	ans.type = (var_type)TYPE_INT;
 	if (a.v.fnum < b.v.fnum)
 	    ans.v.num = -1;
 	else if (a.v.fnum > b.v.fnum)
@@ -238,19 +238,19 @@ compare_numbers(Var a, Var b)
 		    Var	ans;					\
 								\
 		    if (a.type != b.type) {			\
-			ans.type = TYPE_ERR;			\
+			ans.type = (var_type)TYPE_ERR;			\
 			ans.v.err = E_TYPE;			\
 		    } else if (a.type == TYPE_INT) {		\
-			ans.type = TYPE_INT;			\
+			ans.type = (var_type)TYPE_INT;			\
 			ans.v.num = a.v.num op b.v.num;		\
 		    } else {					\
 			double d = a.v.fnum op b.v.fnum;	\
 								\
 			if (!IS_REAL(d)) {			\
-			    ans.type = TYPE_ERR;		\
+			    ans.type = (var_type)TYPE_ERR;		\
 			    ans.v.err = E_FLOAT;		\
 			} else {				\
-			    ans.type = TYPE_FLOAT;		\
+			    ans.type = (var_type)TYPE_FLOAT;		\
 			    ans.v.fnum = d;			\
 			}					\
 		    }						\
@@ -268,25 +268,25 @@ SIMPLE_BINARY(multiply, *)
 		    Var	ans;					\
 								\
 		    if (a.type != b.type) {			\
-			ans.type = TYPE_ERR;			\
+			ans.type = (var_type)TYPE_ERR;			\
 			ans.v.err = E_TYPE;			\
 		    } else if (a.type == TYPE_INT		\
 			       && b.v.num != 0) {		\
-			ans.type = TYPE_INT;			\
+			ans.type = (var_type)TYPE_INT;			\
 			ans.v.num = a.v.num iop b.v.num;	\
 		    } else if (a.type == TYPE_FLOAT		\
 			       && b.v.fnum != 0.0) {		\
 			double d = fexpr;			\
 								\
 			if (!IS_REAL(d)) {			\
-			    ans.type = TYPE_ERR;		\
+			    ans.type = (var_type)TYPE_ERR;		\
 			    ans.v.err = E_FLOAT;		\
 			} else {				\
-			    ans.type = TYPE_FLOAT;		\
+			    ans.type = (var_type)TYPE_FLOAT;		\
 			    ans.v.fnum = d;			\
 		        }					\
 		    } else {					\
-		        ans.type = TYPE_ERR;			\
+		        ans.type = (var_type)TYPE_ERR;			\
 			ans.v.err = E_DIV;			\
 		    }						\
 								\
@@ -307,14 +307,14 @@ do_power(Var lhs, Var rhs)
 	    goto type_error;
 
 	b = rhs.v.num;
-	ans.type = TYPE_INT;
+	ans.type = (var_type)TYPE_INT;
 	if (b < 0) {
 	    switch (a) {
 	    case -1:
 		ans.v.num = (b & 1) ? 1 : -1;
 		break;
 	    case 0:
-		ans.type = TYPE_ERR;
+		ans.type = (var_type)TYPE_ERR;
 		ans.v.err = E_DIV;
 		break;
 	    case 1:
@@ -350,10 +350,10 @@ do_power(Var lhs, Var rhs)
 	errno = 0;
 	d = pow(lhs.v.fnum, d);
 	if (errno != 0 || !IS_REAL(d)) {
-	    ans.type = TYPE_ERR;
+	    ans.type = (var_type)TYPE_ERR;
 	    ans.v.err = E_FLOAT;
 	} else {
-	    ans.type = TYPE_FLOAT;
+	    ans.type = (var_type)TYPE_FLOAT;
 	    ans.v.fnum = d;
 	}
     } else
@@ -362,7 +362,7 @@ do_power(Var lhs, Var rhs)
     return ans;
 
   type_error:
-    ans.type = TYPE_ERR;
+    ans.type = (var_type)TYPE_ERR;
     ans.v.err = E_TYPE;
     return ans;
 }
@@ -375,7 +375,7 @@ bf_toint(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     enum error e;
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     e = become_integer(arglist.v.list[1], &(r.v.num), 1);
 
     free_var(arglist);
@@ -391,7 +391,7 @@ bf_tofloat(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     enum error e;
 
-    r.type = TYPE_FLOAT;
+    r.type = (var_type)TYPE_FLOAT;
     e = become_float(arglist.v.list[1], &r.v.fnum);
 
     free_var(arglist);
@@ -696,7 +696,7 @@ bf_ctime(Var arglist, Byte next, void *vdata, Objid progr)
 
     if (buffer[8] == '0')
 	buffer[8] = ' ';
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(buffer);
 
     return make_var_pack(r);
@@ -729,7 +729,7 @@ bf_random(Var arglist, Byte next, void *vdata, Objid progr)
 #  error "unsupported RAND_MAX"
 #endif
 
-	r.type = TYPE_INT;
+	r.type = (var_type)TYPE_INT;
 	r.v.num = 1 + rr % num;
 	return make_var_pack(r);
     }
@@ -753,7 +753,7 @@ bf_floatstr(Var arglist, Byte next, void *vdata, Objid progr)
     sprintf(fmt, "%%.%"PRIdN"%c", prec, use_sci ? 'e' : 'f');
     sprintf(output, fmt, d);
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(output);
 
     return make_var_pack(r);
@@ -764,7 +764,7 @@ Var zero;			/* useful constant */
 void
 register_numbers(void)
 {
-    zero.type = TYPE_INT;
+    zero.type = (var_type)TYPE_INT;
     zero.v.num = 0;
     register_function("toint", 1, 1, bf_toint, TYPE_ANY);
     register_function("tonum", 1, 1, bf_toint, TYPE_ANY);

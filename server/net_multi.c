@@ -263,7 +263,7 @@ pull_input(nhandle * h)
             h->excess_utf_count = 0;
 	} else {
 	    for (ptr = buffer, end = buffer + count; ptr < end && ptr + clearance_utf(*ptr) <= end;) {
-		int c = get_utf(&ptr);
+		int c = get_utf((const char **)&ptr);
 
 		if (my_is_printable(c))
 		    stream_add_utf(s, c);
@@ -432,7 +432,7 @@ static int
 enqueue_output(network_handle nh, const char *line, int line_length,
 	       int add_eol, int flush_ok)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
     int length = line_length + (add_eol ? eol_length : 0);
     char *buffer;
     text_block *block;
@@ -528,7 +528,7 @@ network_make_listener(server_listener sl, Var desc,
 int
 network_listen(network_listener nl)
 {
-    nlistener *l = nl.ptr;
+    nlistener *l = (nlistener *)nl.ptr;
 
     return proto_listen(l->fd);
 }
@@ -549,7 +549,7 @@ network_send_bytes(network_handle nh, const char *buffer, int buflen,
 int
 network_buffered_output_length(network_handle nh)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
 
     return h->output_length;
 }
@@ -557,7 +557,7 @@ network_buffered_output_length(network_handle nh)
 void
 network_suspend_input(network_handle nh)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
 
     h->input_suspended = 1;
 }
@@ -565,7 +565,7 @@ network_suspend_input(network_handle nh)
 void
 network_resume_input(network_handle nh)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
 
     h->input_suspended = 0;
 }
@@ -617,7 +617,7 @@ network_connection_name(network_handle nh)
 void
 network_set_connection_binary(network_handle nh, int do_binary)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
 
     h->binary = do_binary;
 }
@@ -635,7 +635,7 @@ network_set_connection_binary(network_handle nh, int do_binary)
 void
 network_set_client_echo(network_handle nh, int is_on)
 {
-    nhandle *h = nh.ptr;
+    nhandle *h = (nhandle *)nh.ptr;
 
     /* These values taken from RFC 854 and RFC 857. */
 #define TN_IAC	255		/* Interpret As Command */
@@ -682,13 +682,13 @@ network_open_connection(Var arglist, server_listener sl)
 void
 network_close(network_handle h)
 {
-    close_nhandle(h.ptr);
+    close_nhandle((nhandle *)h.ptr);
 }
 
 void
 network_close_listener(network_listener nl)
 {
-    close_nlistener(nl.ptr);
+    close_nlistener((nlistener *)nl.ptr);
 }
 
 void

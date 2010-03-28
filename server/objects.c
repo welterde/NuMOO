@@ -127,11 +127,11 @@ do_move(Var arglist, Byte next, struct bf_move_data *data, Objid progr)
 static package
 bf_move(Var arglist, Byte next, void *vdata, Objid progr)
 {
-    struct bf_move_data *data = vdata;
+    struct bf_move_data *data = (struct bf_move_data *)vdata;
     package p;
 
     if (next == 1) {
-	data = alloc_data(sizeof(*data));
+	data = (struct bf_move_data*)alloc_data(sizeof(*data));
 	data->what = arglist.v.list[1].v.obj;
 	data->where = arglist.v.list[2].v.obj;
     }
@@ -147,7 +147,7 @@ bf_move(Var arglist, Byte next, void *vdata, Objid progr)
 static void
 bf_move_write(void *vdata)
 {
-    struct bf_move_data *data = vdata;
+    struct bf_move_data *data = (struct bf_move_data *)vdata;
 
     dbio_printf("bf_move data: what = %"PRIdN", where = %"PRIdN"\n",
 		data->what, data->where);
@@ -156,7 +156,7 @@ bf_move_write(void *vdata)
 static void *
 bf_move_read()
 {
-    struct bf_move_data *data = alloc_data(sizeof(*data));
+    struct bf_move_data *data = (struct bf_move_data*)alloc_data(sizeof(*data));
 
     if (dbio_scanf("bf_move data: what = %"PRIdN", where = %"PRIdN"\n",
 		   &data->what, &data->where) == 2)
@@ -218,7 +218,7 @@ bf_max_object(Var arglist, Byte next, void *vdata, Objid progr)
 static package
 bf_create(Var arglist, Byte next, void *vdata, Objid progr)
 {				/* (parent [, owner]) */
-    Objid *data = vdata;
+    Objid *data = (Objid *)vdata;
     Var r;
 
     if (next == 1) {
@@ -243,7 +243,7 @@ bf_create(Var arglist, Byte next, void *vdata, Objid progr)
         db_set_object_owner(oid, owner == NOTHING ? oid : owner);
         db_change_parent(oid, parent);
 
-        data = alloc_data(sizeof(*data));
+        data = (Objid *)alloc_data(sizeof(*data));
         *data = oid;
         args = new_list(0);
         e = call_verb(oid, "initialize", args, 0);
@@ -279,7 +279,7 @@ bf_create_write(void *vdata)
 static void *
 bf_create_read(void)
 {
-    Objid *data = alloc_data(sizeof(Objid));
+    Objid *data = (Objid *)alloc_data(sizeof(Objid));
 
     if (dbio_scanf("bf_create data: oid = %"PRIdN"\n", data) == 1)
 	return data;
@@ -339,7 +339,7 @@ struct children_data {
 static int
 add_to_list(void *data, Objid child)
 {
-    struct children_data *d = data;
+    struct children_data *d = (struct children_data*)data;
 
     d->i++;
     d->r.v.list[d->i].type = TYPE_OBJ;
@@ -391,7 +391,7 @@ move_to_nothing(Objid oid)
 static int
 first_proc(void *data, Objid oid)
 {
-    Objid *oidp = data;
+    Objid *oidp = (Objid*)data;
 
     *oidp = oid;
     return 1;
@@ -413,7 +413,7 @@ bf_recycle(Var arglist, Byte func_pc, void *vdata, Objid progr)
     Objid oid, c;
     Var args;
     enum error e;
-    Objid *data = vdata;
+    Objid *data = (Objid*)vdata;
 
     switch (func_pc) {
     case 1:
@@ -425,7 +425,7 @@ bf_recycle(Var arglist, Byte func_pc, void *vdata, Objid progr)
 	else if (!controls(progr, oid))
 	    return make_error_pack(E_PERM);
 
-	data = alloc_data(sizeof(*data));
+	data = (Objid*)alloc_data(sizeof(*data));
 	*data = oid;
 	args = new_list(0);
 	e = call_verb(oid, "recycle", args, 0);
@@ -477,7 +477,7 @@ bf_recycle(Var arglist, Byte func_pc, void *vdata, Objid progr)
 static void
 bf_recycle_write(void *vdata)
 {
-    Objid *data = vdata;
+    Objid *data = (Objid*)vdata;
 
     dbio_printf("bf_recycle data: oid = %"PRIdN", cont = 0\n", *data);
 }
@@ -485,7 +485,7 @@ bf_recycle_write(void *vdata)
 static void *
 bf_recycle_read(void)
 {
-    Objid *data = alloc_data(sizeof(*data));
+    Objid *data = (Objid*)alloc_data(sizeof(*data));
     int dummy;
 
     /* I use a `dummy' variable here and elsewhere instead of the `*'
@@ -529,10 +529,10 @@ static package
 bf_set_player_flag(Var arglist, Byte next, void *vdata, Objid progr)
 {				/* (object, yes/no) */
     Var obj;
-    char bool;
+    char flag;
 
     obj = arglist.v.list[1];
-    bool = is_true(arglist.v.list[2]);
+    flag = is_true(arglist.v.list[2]);
 
     free_var(arglist);
 
@@ -541,7 +541,7 @@ bf_set_player_flag(Var arglist, Byte next, void *vdata, Objid progr)
     else if (!is_wizard(progr))
 	return make_error_pack(E_PERM);
 
-    if (bool) {
+    if (flag) {
 	db_set_object_flag(obj.v.obj, FLAG_USER);
     } else {
 	boot_player(obj.v.obj);

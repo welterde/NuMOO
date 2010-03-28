@@ -104,8 +104,13 @@ depend: ${ALL_CSRCS}
 	rm -f eddep makedep
 
 # for flymake's benefit.  only works with gcc.
-check-syntax:
+cxx-check-syntax:
+	g++ -D__STDC_FORMAT_MACROS -fsyntax-only $(CHK_SOURCES)	
+
+cc-check-syntax:
 	gcc -Wall -fsyntax-only $(CHK_SOURCES)	
+
+check-syntax: cc-check-syntax
 
 .SUFFIXES: .c .o .i .s
 .c.o:

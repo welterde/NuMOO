@@ -30,18 +30,18 @@ new_list(int size)
 	static Var emptylist;
 
 	if (emptylist.v.list == 0) {
-	    emptylist.type = TYPE_LIST;
+	    emptylist.type = (var_type)TYPE_LIST;
 	    emptylist.v.list = (Var *)mymalloc(1 * sizeof(Var), M_LIST);
-	    emptylist.v.list[0].type = TYPE_INT;
+	    emptylist.v.list[0].type = (var_type)TYPE_INT;
 	    emptylist.v.list[0].v.num = 0;
 	}
 	/* give the lucky winner a reference */
 	addref(emptylist.v.list);
 	return emptylist;
     }
-    newbie.type = TYPE_LIST;
+    newbie.type = (var_type)TYPE_LIST;
     newbie.v.list = (Var *) mymalloc((size + 1) * sizeof(Var), M_LIST);
-    newbie.v.list[0].type = TYPE_INT;
+    newbie.v.list[0].type = (var_type)TYPE_INT;
     newbie.v.list[0].v.num = size;
     return newbie;
 }
@@ -215,7 +215,7 @@ float2str(double n)
 {
     char *buffer;
 
-    buffer = mymalloc(40, M_STREAM);
+    buffer = (char *)mymalloc(40, M_STREAM);
     snprintf(buffer, 40, "%.*g", DBL_DIG, n);
     if (!strchr(buffer, '.') && !strchr(buffer, 'e'))
         strncat(buffer, ".0", 40);   /* make it look floating */
@@ -249,7 +249,7 @@ list2str(Var * args)
 	case TYPE_FLOAT:
             s = float2str(args[i].v.fnum);
             stream_add_string(str, s);
-            myfree(s, M_STREAM);
+            myfree((void *)s, M_STREAM);
 	    break;
 	case TYPE_LIST:
 	    stream_add_string(str, "{list}");
@@ -291,12 +291,13 @@ print_to_stream(Var v, Stream * s)
 	stream_printf(s, "#%"PRIdN, v.v.obj);
 	break;
     case TYPE_ERR:
-	stream_add_string(s, error_name(v.v.num));
+	/* stream_add_string(s, error_name(v.v.num)); */
+	stream_add_string(s, error_name(v.v.err));
 	break;
     case TYPE_FLOAT:
         tmp = float2str(v.v.fnum);
         stream_add_string(s, tmp);
-        myfree(tmp, M_STREAM);
+        myfree((void *)tmp, M_STREAM);
 	break;
     case TYPE_STR:
 	{
@@ -360,7 +361,7 @@ strrangeset(Var base, int from, int to, Var value)
     Var ans;
     char *s;
 
-    ans.type = TYPE_STR;
+    ans.type = (var_type)TYPE_STR;
     s = (char *)mymalloc(sizeof(char) * (newsize + 1), M_STRING);
 
     for (index = 0; index < lenleft; index++)
@@ -381,14 +382,14 @@ substr(Var str, int lower, int upper)
 {
     Var r;
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     if (lower > upper)
 	r.v.str = str_dup("");
     else {
 	int loop, index = 0;
         int lower_ind = skip_utf(str.v.str, lower - 1);
         int upper_ind = lower_ind + skip_utf(str.v.str + lower_ind, upper + 1 - lower);
-	char *s = mymalloc(upper_ind - lower_ind + 1, M_STRING);
+	char *s = (char *)mymalloc(upper_ind - lower_ind + 1, M_STRING);
 
 	for (loop = lower_ind; loop < upper_ind; loop++)
 	    s[index++] = str.v.str[loop];
@@ -407,7 +408,7 @@ strget(Var str, Var i)
     int ind = skip_utf(str.v.str, i.v.num - 1);
     int n = clearance_utf(str.v.str[ind]);
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     s = (char* )mymalloc(n + 1, M_STRING);
     strncpy(s, str.v.str + ind, n);
     s[n] = 0;
@@ -423,11 +424,11 @@ bf_length(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     switch (arglist.v.list[1].type) {
     case TYPE_LIST:
-	r.type = TYPE_INT;
+	r.type = (var_type)TYPE_INT;
 	r.v.num = arglist.v.list[1].v.list[0].v.num;
 	break;
     case TYPE_STR:
-	r.type = TYPE_INT;
+	r.type = (var_type)TYPE_INT;
 	r.v.num = strlen_utf(arglist.v.list[1].v.str);
 	break;
     default:
@@ -522,7 +523,7 @@ bf_iassoc(Var arglist, Byte next, void *vdata, Objid progr)
     /* 	return make_raise_pack(E_PERM, "Temporarily requires wizperms (Security)", zero); */
     /* } */
     
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     if (arglist.v.list[0].v.num == 3)
         index = arglist.v.list[3].v.num;
     
@@ -629,7 +630,7 @@ bf_equal(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = equality(arglist.v.list[1], arglist.v.list[2], 1);
     free_var(arglist);
     return make_var_pack(r);
@@ -640,7 +641,7 @@ bf_is_member(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = ismember(arglist.v.list[1], arglist.v.list[2], 1);
     free_var(arglist);
     return make_var_pack(r);
@@ -658,7 +659,7 @@ bf_strsub(Var arglist, Byte next, void *vdata, Objid progr)
 	free_var(arglist);
 	return make_error_pack(E_INVARG);
     } else {
-	r.type = TYPE_STR;
+	r.type = (var_type)TYPE_STR;
 	r.v.str = str_dup(strsub(arglist.v.list[1].v.str,
 				 arglist.v.list[2].v.str,
 				 arglist.v.list[3].v.str, case_matters));
@@ -691,10 +692,10 @@ bf_crypt(Var arglist, Byte next, void *vdata, Objid progr)
 	 * for all crypt versions */
 	saltp = arglist.v.list[2].v.str;
     }
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(crypt(arglist.v.list[1].v.str, saltp));
 #else				/* !HAVE_CRYPT */
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_ref(arglist.v.list[1].v.str);
 #endif
 
@@ -713,7 +714,7 @@ bf_strcmp(Var arglist, Byte next, void *vdata, Objid progr)
 {				/* (string1, string2) */
     Var r;
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = signum(strcmp(arglist.v.list[1].v.str, arglist.v.list[2].v.str));
     free_var(arglist);
     return make_var_pack(r);
@@ -727,7 +728,7 @@ bf_index(Var arglist, Byte next, void *vdata, Objid progr)
 
     if (arglist.v.list[0].v.num == 3)
 	case_matters = is_true(arglist.v.list[3]);
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = strindex(arglist.v.list[1].v.str, arglist.v.list[2].v.str,
 		       case_matters);
 
@@ -744,7 +745,7 @@ bf_rindex(Var arglist, Byte next, void *vdata, Objid progr)
 
     if (arglist.v.list[0].v.num == 3)
 	case_matters = is_true(arglist.v.list[3]);
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = strrindex(arglist.v.list[1].v.str, arglist.v.list[2].v.str,
 			case_matters);
 
@@ -756,7 +757,7 @@ static package
 bf_tostr(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(list2str(arglist.v.list));
     free_var(arglist);
     return make_var_pack(r);
@@ -767,7 +768,7 @@ bf_toliteral(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(value_to_literal(arglist.v.list[1]));
     free_var(arglist);
     return make_var_pack(r);
@@ -864,25 +865,25 @@ do_match(Var arglist, int reverse, int dialect)
                       dialect);
 
     if (!pat.ptr) {
-	ans.type = TYPE_ERR;
+	ans.type = (var_type)TYPE_ERR;
 	ans.v.err = E_INVARG;
     } else
 	switch (match_pattern(pat, subject, regs, reverse)) {
 	case MATCH_SUCCEEDED:
             subject_len = strlen_utf(subject);
 	    ans = new_list(4);
-	    ans.v.list[1].type = TYPE_INT;
-	    ans.v.list[2].type = TYPE_INT;
-	    ans.v.list[4].type = TYPE_STR;
+	    ans.v.list[1].type = (var_type)TYPE_INT;
+	    ans.v.list[2].type = (var_type)TYPE_INT;
+	    ans.v.list[4].type = (var_type)TYPE_STR;
 	    ans.v.list[1].v.num = match_rebase(regs[0].start);
 	    ans.v.list[2].v.num = match_rebase(regs[0].end + 1) - 1;
 	    ans.v.list[3] = new_list(9);
 	    ans.v.list[4].v.str = str_ref(subject);
 	    for (i = 1; i <= 9; i++) {
 		ans.v.list[3].v.list[i] = new_list(2);
-		ans.v.list[3].v.list[i].v.list[1].type = TYPE_INT;
+		ans.v.list[3].v.list[i].v.list[1].type = (var_type)TYPE_INT;
 		ans.v.list[3].v.list[i].v.list[1].v.num = match_rebase(regs[i].start);
-		ans.v.list[3].v.list[i].v.list[2].type = TYPE_INT;
+		ans.v.list[3].v.list[i].v.list[2].type = (var_type)TYPE_INT;
 		ans.v.list[3].v.list[i].v.list[2].v.num = match_rebase(regs[i].end + 1) - 1;
 	    }
 	    break;
@@ -890,7 +891,7 @@ do_match(Var arglist, int reverse, int dialect)
 	    ans = new_list(0);
 	    break;
 	case MATCH_ABORTED:
-	    ans.type = TYPE_ERR;
+	    ans.type = (var_type)TYPE_ERR;
 	    ans.v.err = E_QUOTA;
 	    break;
 	}
@@ -996,15 +997,15 @@ check_subs_list(Var subs)
 static package
 bf_substitute(Var arglist, Byte next, void *vdata, Objid progr)
 {
-    int template_length, subject_length;
-    const char *template, *subject;
+    int tmpl_length, subject_length;
+    const char *tmpl, *subject;
     Var subs, ans;
     int invarg = 0;
     Stream *s;
     char c = '\0';
 
-    template = arglist.v.list[1].v.str;
-    template_length = memo_strlen(template);
+    tmpl = arglist.v.list[1].v.str;
+    tmpl_length = memo_strlen(tmpl);
     subs = arglist.v.list[2];
 
     if (check_subs_list(subs)) {
@@ -1014,15 +1015,15 @@ bf_substitute(Var arglist, Byte next, void *vdata, Objid progr)
     subject = subs.v.list[4].v.str;
     subject_length = memo_strlen(subject);
 
-    s = new_stream(template_length);
-    ans.type = TYPE_STR;
-    while ((c = *(template++)) != '\0') {
+    s = new_stream(tmpl_length);
+    ans.type = (var_type)TYPE_STR;
+    while ((c = *(tmpl++)) != '\0') {
 	switch (c) {
 	case '%':
 	    {
 		Var pair;
 		int start = 0, end = 0;
-		c = *(template++);
+		c = *(tmpl++);
 		if (c == '%')
 		    stream_add_char(s, '%');
 		else {
@@ -1067,7 +1068,7 @@ bf_value_bytes(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = value_bytes(arglist.v.list[1]);
     free_var(arglist);
     return make_var_pack(r);
@@ -1103,7 +1104,7 @@ bf_binary_hash(Var arglist, Byte next, void *vdata, Objid progr)
     free_var(arglist);
     if (!bytes)
 	return make_error_pack(E_INVARG);
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = hash_bytes(bytes, length);
     return make_var_pack(r);
 }
@@ -1114,7 +1115,7 @@ bf_string_hash(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     const char *str = arglist.v.list[1].v.str;
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = hash_bytes(str, memo_strlen(str));
     free_var(arglist);
     return make_var_pack(r);
@@ -1126,7 +1127,7 @@ bf_value_hash(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     const char *lit = value_to_literal(arglist.v.list[1]);
 
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = hash_bytes(lit, memo_strlen(lit));
     free_var(arglist);
     return make_var_pack(r);
@@ -1149,7 +1150,7 @@ bf_decode_binary(Var arglist, Byte next, void *vdata, Objid progr)
     if (fully) {
 	r = new_list(length);
 	for (i = 1; i <= length; i++) {
-	    r.v.list[i].type = TYPE_INT;
+	    r.v.list[i].type = (var_type)TYPE_INT;
 	    r.v.list[i].v.num = (unsigned char) bytes[i - 1];
 	}
     } else {
@@ -1181,11 +1182,11 @@ bf_decode_binary(Var arglist, Byte next, void *vdata, Objid progr)
 		in_string = 1;
 	    } else {
 		if (in_string) {
-		    r.v.list[count].type = TYPE_STR;
+		    r.v.list[count].type = (var_type)TYPE_STR;
 		    r.v.list[count].v.str = str_dup(reset_stream(s));
 		    count++;
 		}
-		r.v.list[count].type = TYPE_INT;
+		r.v.list[count].type = (var_type)TYPE_INT;
 		r.v.list[count].v.num = c;
 		count++;
 		in_string = 0;
@@ -1193,7 +1194,7 @@ bf_decode_binary(Var arglist, Byte next, void *vdata, Objid progr)
 	}
 
 	if (in_string) {
-	    r.v.list[count].type = TYPE_STR;
+	    r.v.list[count].type = (var_type)TYPE_STR;
 	    r.v.list[count].v.str = str_dup(reset_stream(s));
 	}
     }
@@ -1243,7 +1244,7 @@ bf_encode_binary(Var arglist, Byte next, void *vdata, Objid progr)
     length = stream_length(s);
     bytes = reset_stream(s);
     if (ok) {
-	r.type = TYPE_STR;
+	r.type = (var_type)TYPE_STR;
 	r.v.str = str_dup(raw_bytes_to_binary(bytes, length));
 	return make_var_pack(r);
     } else
@@ -1282,7 +1283,7 @@ static package bf_tochar(Var arglist, Byte next, void *vdata, Objid progr)
         ucs = 0;
     if (ucs) {
         stream_add_utf(s, ucs);
-        ans.type = TYPE_STR;
+        ans.type = (var_type)TYPE_STR;
 	ans.v.str = str_dup(reset_stream(s));
     }
     if (!ucs)
@@ -1307,7 +1308,7 @@ static package bf_charname(Var arglist, Byte next, void *vdata, Objid progr)
     ucd = unicode_character_data(ucs);
     if (!ucd)
         return make_error_pack(E_INVARG);
-    ans.type = TYPE_STR;
+    ans.type = (var_type)TYPE_STR;
     ans.v.str = str_dup(ucd->name);
     unicode_character_put(ucd);
     return make_var_pack(ans);
@@ -1325,7 +1326,7 @@ static package bf_ord(Var arglist, Byte next, void *vdata, Objid progr)
         return make_error_pack(E_INVARG);
     }
     free_var(arglist);
-    ans.type = TYPE_INT;
+    ans.type = (var_type)TYPE_INT;
     ans.v.num = ucs;
     return make_var_pack(ans);
 }
@@ -1385,7 +1386,7 @@ bf_encode_chars(Var arglist, Byte next, void *vdata, Objid progr)
     if (ok) {
 	Var r;
 
-	r.type = TYPE_STR;
+	r.type = (var_type)TYPE_STR;
 	r.v.str = str_dup(raw_bytes_to_binary(bytes, length));
 	return make_var_pack(r);
     } else
@@ -1419,7 +1420,7 @@ bf_decode_chars(Var arglist, Byte next, void *vdata, Objid progr)
 		r = new_list(length);
 
 		for (i = 1; i <= length; ++i) {
-		    r.v.list[i].type = TYPE_INT;
+		    r.v.list[i].type = (var_type)TYPE_INT;
 		    r.v.list[i].v.num = *chars++;
 		}
 	    }
@@ -1437,19 +1438,19 @@ bf_decode_chars(Var arglist, Byte next, void *vdata, Objid progr)
 			stream_add_utf(s, c);
 		    else {
 			if (stream_length(s)) {
-			    elt.type = TYPE_STR;
+			    elt.type = (var_type)TYPE_STR;
 			    elt.v.str = str_dup(reset_stream(s));
 			    r = listappend(r, elt);
 			}
 
-			elt.type = TYPE_INT;
+			elt.type = (var_type)TYPE_INT;
 			elt.v.num = c;
 			r = listappend(r, elt);
 		    }
 		}
 
 		if (stream_length(s)) {
-		    elt.type = TYPE_STR;
+		    elt.type = (var_type)TYPE_STR;
 		    elt.v.str = str_dup(reset_stream(s));
 		    r = listappend(r, elt);
 		}

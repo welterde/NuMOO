@@ -227,7 +227,7 @@ icmd_list(int icmd_flags)
 {
     Var s;
     Var list = new_list(0);
-    s.type = TYPE_STR;
+    s.type = (var_type)TYPE_STR;
 #define _ICMD_MKSTR(ICMD_PREFIX,PREFIX,_)	\
 	if (icmd_flags & (1<<ICMD_PREFIX)) {	\
 	    s.v.str = str_dup(#PREFIX);		\
@@ -544,7 +544,7 @@ struct state {
 static void
 my_error(void *data, const char *msg)
 {
-    struct state *s = data;
+    struct state *s = (struct state *)data;
 
     notify(s->player, msg);
     s->nerrors++;
@@ -553,7 +553,7 @@ my_error(void *data, const char *msg)
 static int
 my_getc(void *data)
 {
-    struct state *s = data;
+    struct state *s = (struct state *)data;
 
     if (*(s->input) != '\0')
 	return *(s->input++);
@@ -575,7 +575,7 @@ end_programming(tqueue * tq)
 	db_verb_handle h;
 	Var desc;
 
-	desc.type = TYPE_STR;
+	desc.type = (var_type)TYPE_STR;
 	desc.v.str = tq->program_verb;
 	h = find_described_verb(tq->program_object, desc);
 
@@ -691,7 +691,7 @@ do_command_task(tqueue * tq, char *command)
 	    db_verb_handle vh;
 	    Var result, args;
 
-	    result.type = TYPE_INT;	/* for free_var() if task isn't DONE */
+	    result.type = (var_type)TYPE_INT;	/* for free_var() if task isn't DONE */
 	    if (tq->output_prefix)
 		notify(tq->player, tq->output_prefix);
 
@@ -734,7 +734,7 @@ do_login_task(tqueue * tq, char *command)
     Var args;
     Objid old_max_object = db_last_used_objid();
 
-    result.type = TYPE_INT;	/* In case #0:do_login_command does not exist
+    result.type = (var_type)TYPE_INT;	/* In case #0:do_login_command does not exist
 				 * or does not immediately return.
 				 */
 
@@ -798,7 +798,8 @@ task_queue
 new_task_queue(Objid player, Objid handler)
 {
     task_queue result;
-    tqueue *tq = result.ptr = find_tqueue(player, 1);
+    tqueue *tq = find_tqueue(player, 1);
+    result.ptr = tq;
 
     tq->connected = 1;
     tq->handler = handler;
@@ -939,7 +940,7 @@ enqueue_input_task(tqueue * tq, const char *input, int at_front, int binary)
 void
 task_suspend_input(task_queue q)
 {
-    tqueue *tq = q.ptr;
+    tqueue *tq = (tqueue *)q.ptr;
 
     if (!tq->input_suspended && tq->connected) {
 	server_suspend_input(tq->player);
@@ -973,7 +974,7 @@ flush_input(tqueue * tq, int show_messages)
 void
 new_input_task(task_queue q, const char *input, int binary)
 {
-    tqueue *tq = q.ptr;
+    tqueue *tq = (tqueue *)q.ptr;
 
     if (tq->flush_cmd && mystrcasecmp(input, tq->flush_cmd) == 0) {
 	flush_input(tq, 1);
@@ -1074,7 +1075,7 @@ enqueue_forked_task2(activation a, int f_index, double after_seconds, int vid)
     a.prog = program_ref(a.prog);
     if (vid >= 0) {
 	free_var(a.rt_env[vid]);
-	a.rt_env[vid].type = TYPE_INT;
+	a.rt_env[vid].type = (var_type)TYPE_INT;
 	a.rt_env[vid].v.num = id;
     }
     rt_env = copy_rt_env(a.rt_env, a.prog->num_var_names);
@@ -1136,13 +1137,13 @@ read_input_now(Objid connection)
     Var r;
 
     if (!tq || is_out_of_input(tq)) {
-	r.type = TYPE_ERR;
+	r.type = (var_type)TYPE_ERR;
 	r.v.err = E_INVARG;
     } else if (!(t = dequeue_input_task(tq, DQ_INBAND))) {
-	r.type = TYPE_INT;
+	r.type = (var_type)TYPE_INT;
 	r.v.num = 0;
     } else {
-	r.type = TYPE_STR;
+	r.type = (var_type)TYPE_STR;
 	r.v.str = t->t.input.string;
 	myfree(t, M_TASK);
     }
@@ -1233,7 +1234,7 @@ run_ready_tasks(void)
 
 		tq->reading = 0;
 		current_task_id = tq->reading_vm->task_id;
-		v.type = TYPE_ERR;
+		v.type = (var_type)TYPE_ERR;
 		v.v.err = E_INVARG;
 		resume_from_previous_vm(tq->reading_vm, v);
 		did_one = 1;
@@ -1262,7 +1263,7 @@ run_ready_tasks(void)
 
 			tq->reading = 0;
 			current_task_id = tq->reading_vm->task_id;
-			v.type = TYPE_STR;
+			v.type = (var_type)TYPE_STR;
 			v.v.str = t->t.input.string;
 			resume_from_previous_vm(tq->reading_vm, v);
 			did_one = 1;
@@ -1491,7 +1492,7 @@ read_task_queue(void)
 	    errlog("READ_TASK_QUEUE: Bad activation, count = %d.\n", count);
 	    return 0;
 	}
-	a.temp.type = TYPE_NONE;
+	a.temp.type = (var_type)TYPE_NONE;
 	if (!read_rt_env(&old_names, &old_rt_env, &old_size)) {
 	    errlog("READ_TASK_QUEUE: Bad env, count = %d.\n", count);
 	    return 0;
@@ -1596,7 +1597,7 @@ find_verb_for_programming(Objid player, const char *verbref,
 	free_str(copy);
 	return h;
     }
-    desc.type = TYPE_STR;
+    desc.type = (var_type)TYPE_STR;
     desc.v.str = *vname;
     h = find_described_verb(oid, desc);
     free_str(copy);
@@ -1634,12 +1635,12 @@ bf_queue_info(Var arglist, Byte next, void *vdata, Objid progr)
 
 	res = new_list(count);
 	for (tq = active_tqueues; tq; tq = tq->next) {
-	    res.v.list[count].type = TYPE_OBJ;
+	    res.v.list[count].type = (var_type)TYPE_OBJ;
 	    res.v.list[count].v.obj = tq->player;
 	    count--;
 	}
 	for (tq = idle_tqueues; tq; tq = tq->next) {
-	    res.v.list[count].type = TYPE_OBJ;
+	    res.v.list[count].type = (var_type)TYPE_OBJ;
 	    res.v.list[count].v.obj = tq->player;
 	    count--;
 	}
@@ -1647,7 +1648,7 @@ bf_queue_info(Var arglist, Byte next, void *vdata, Objid progr)
 	Objid who = arglist.v.list[1].v.obj;
 	tqueue *tq = find_tqueue(who, 0);
 
-	res.type = TYPE_INT;
+	res.type = (var_type)TYPE_INT;
 	res.v.num = (tq ? tq->num_bg_tasks : 0);
     }
 
@@ -1659,7 +1660,7 @@ static package
 bf_task_id(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     r.v.num = current_task_id;
     free_var(arglist);
     return make_var_pack(r);
@@ -1708,25 +1709,25 @@ list_for_forked_task(forked_task ft)
     Var list;
 
     list = new_list(10);
-    list.v.list[1].type = TYPE_INT;
+    list.v.list[1].type = (var_type)TYPE_INT;
     list.v.list[1].v.num = ft.id;
-    list.v.list[2].type = TYPE_INT;
+    list.v.list[2].type = (var_type)TYPE_INT;
     list.v.list[2].v.num = ROUND(&ft.start_tv);
-    list.v.list[3].type = TYPE_INT;
+    list.v.list[3].type = (var_type)TYPE_INT;
     list.v.list[3].v.num = 0;	/* OBSOLETE: was clock ID */
-    list.v.list[4].type = TYPE_INT;
+    list.v.list[4].type = (var_type)TYPE_INT;
     list.v.list[4].v.num = DEFAULT_BG_TICKS;	/* OBSOLETE: was clock ticks */
-    list.v.list[5].type = TYPE_OBJ;
+    list.v.list[5].type = (var_type)TYPE_OBJ;
     list.v.list[5].v.obj = ft.a.progr;
-    list.v.list[6].type = TYPE_OBJ;
+    list.v.list[6].type = (var_type)TYPE_OBJ;
     list.v.list[6].v.obj = ft.a.vloc;
-    list.v.list[7].type = TYPE_STR;
+    list.v.list[7].type = (var_type)TYPE_STR;
     list.v.list[7].v.str = str_ref(ft.a.verbname);
-    list.v.list[8].type = TYPE_INT;
+    list.v.list[8].type = (var_type)TYPE_INT;
     list.v.list[8].v.num = find_line_number(ft.program, ft.f_index, 0);
-    list.v.list[9].type = TYPE_OBJ;
+    list.v.list[9].type = (var_type)TYPE_OBJ;
     list.v.list[9].v.obj = ft.a.thisobj;
-    list.v.list[10].type = TYPE_INT;
+    list.v.list[10].type = (var_type)TYPE_INT;
     list.v.list[10].v.num = forked_task_bytes(ft);
 
     return list;
@@ -1751,24 +1752,24 @@ list_for_vm(vm the_vm)
 
     list = new_list(10);
 
-    list.v.list[1].type = TYPE_INT;
+    list.v.list[1].type = (var_type)TYPE_INT;
     list.v.list[1].v.num = the_vm->task_id;
 
-    list.v.list[3].type = TYPE_INT;
+    list.v.list[3].type = (var_type)TYPE_INT;
     list.v.list[3].v.num = 0;	/* OBSOLETE: was clock ID */
-    list.v.list[4].type = TYPE_INT;
+    list.v.list[4].type = (var_type)TYPE_INT;
     list.v.list[4].v.num = DEFAULT_BG_TICKS;	/* OBSOLETE: was clock ticks */
-    list.v.list[5].type = TYPE_OBJ;
+    list.v.list[5].type = (var_type)TYPE_OBJ;
     list.v.list[5].v.obj = progr_of_cur_verb(the_vm);
-    list.v.list[6].type = TYPE_OBJ;
+    list.v.list[6].type = (var_type)TYPE_OBJ;
     list.v.list[6].v.obj = top_activ(the_vm).vloc;
-    list.v.list[7].type = TYPE_STR;
+    list.v.list[7].type = (var_type)TYPE_STR;
     list.v.list[7].v.str = str_ref(top_activ(the_vm).verbname);
-    list.v.list[8].type = TYPE_INT;
+    list.v.list[8].type = (var_type)TYPE_INT;
     list.v.list[8].v.num = suspended_lineno_of_vm(the_vm);
-    list.v.list[9].type = TYPE_OBJ;
+    list.v.list[9].type = (var_type)TYPE_OBJ;
     list.v.list[9].v.obj = top_activ(the_vm).thisobj;
-    list.v.list[10].type = TYPE_INT;
+    list.v.list[10].type = (var_type)TYPE_INT;
     list.v.list[10].v.num = suspended_task_bytes(the_vm);
 
     return list;
@@ -1780,7 +1781,7 @@ list_for_suspended_task(suspended_task st)
     Var list;
 
     list = list_for_vm(st.the_vm);
-    list.v.list[2].type = TYPE_INT;
+    list.v.list[2].type = (var_type)TYPE_INT;
     list.v.list[2].v.num = ROUND(&st.start_tv);
 
     return list;
@@ -1792,7 +1793,7 @@ list_for_reading_task(Objid player, vm the_vm)
     Var list;
 
     list = list_for_vm(the_vm);
-    list.v.list[2].type = TYPE_INT;
+    list.v.list[2].type = (var_type)TYPE_INT;
     list.v.list[2].v.num = -1;	/* conventional value */
 
     list.v.list[5].v.obj = player;
@@ -1810,7 +1811,7 @@ struct qcl_data {
 static task_enum_action
 counting_closure(vm the_vm, const char *status, void *data)
 {
-    struct qcl_data *qdata = data;
+    struct qcl_data *qdata = (struct qcl_data *)data;
 
     if (qdata->show_all || qdata->progr == progr_of_cur_verb(the_vm))
 	qdata->i++;
@@ -1821,12 +1822,12 @@ counting_closure(vm the_vm, const char *status, void *data)
 static task_enum_action
 listing_closure(vm the_vm, const char *status, void *data)
 {
-    struct qcl_data *qdata = data;
+    struct qcl_data *qdata = (struct qcl_data *)data;
     Var list;
 
     if (qdata->show_all || qdata->progr == progr_of_cur_verb(the_vm)) {
 	list = list_for_vm(the_vm);
-	list.v.list[2].type = TYPE_STR;
+	list.v.list[2].type = (var_type)TYPE_STR;
 	list.v.list[2].v.str = str_dup(status);
 	qdata->tasks.v.list[qdata->i++] = list;
     }
@@ -1926,7 +1927,7 @@ struct fcl_data {
 static task_enum_action
 finding_closure(vm the_vm, const char *status, void *data)
 {
-    struct fcl_data *fdata = data;
+    struct fcl_data *fdata = (struct fcl_data *)data;
 
     if (the_vm->task_id == fdata->id) {
 	fdata->the_vm = the_vm;
@@ -1985,7 +1986,7 @@ struct kcl_data {
 static task_enum_action
 killing_closure(vm the_vm, const char *status, void *data)
 {
-    struct kcl_data *kdata = data;
+    struct kcl_data *kdata = (struct kcl_data *)data;
 
     if (the_vm->task_id == kdata->id) {
 	if (is_wizard(kdata->owner)
@@ -2193,7 +2194,7 @@ bf_output_delimiters(Var arglist, Byte next, void *vdata, Objid progr)
 	    suffix = "";
 
 	r = new_list(2);
-	r.v.list[1].type = r.v.list[2].type = TYPE_STR;
+	r.v.list[1].type = r.v.list[2].type = (var_type)TYPE_STR;
 	r.v.list[1].v.str = str_dup(prefix);
 	r.v.list[2].v.str = str_dup(suffix);
     }

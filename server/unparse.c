@@ -330,14 +330,14 @@ unparse_stmt_fork(Stream * str, struct Stmt_Fork fork_stmt, int indent)
 }
 
 static void
-unparse_stmt_catch(Stream * str, struct Stmt_Catch catch, int indent)
+unparse_stmt_catch(Stream * str, struct Stmt_Catch catchstmt, int indent)
 {
     Except_Arm *ex;
 
     stream_add_string(str, "try");
     output(str);
-    unparse_stmt(catch.body, indent + 2);
-    for (ex = catch.excepts; ex; ex = ex->next) {
+    unparse_stmt(catchstmt.body, indent + 2);
+    for (ex = catchstmt.excepts; ex; ex = ex->next) {
 	indent_stmt(str, indent);
 	stream_add_string(str, "except ");
 	if (ex->id >= 0)
@@ -695,7 +695,7 @@ unparse_program(Program * p, Unparser_Receiver r, void *data,
 static void
 print_line(void *data, const char *line)
 {
-    FILE *fp = data;
+    FILE *fp = (FILE *)data;
 
     fprintf(fp, "%s\n", line);
 }

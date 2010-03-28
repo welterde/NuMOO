@@ -83,7 +83,7 @@ gen_waif_propdefs(Object *o)
 	wpd = (WaifPropdefs *) mymalloc(sizeof(WaifPropdefs) +
 			(cnt-1) * sizeof(Propdef), M_WAIF_XTRA);
 	/* must free this after to avoid getting the same pointer! */
-	free_waif_propdefs(o->waif_propdefs);
+	free_waif_propdefs((WaifPropdefs*)o->waif_propdefs);
 
 	wpd->refcount = 1;
 	wpd->length = cnt;
@@ -107,7 +107,7 @@ gen_waif_propdefs(Object *o)
 void
 waif_rename_propdef(Object *o, const char *old, const char *newbie)
 {
-	WaifPropdefs *wpd = o->waif_propdefs;
+    WaifPropdefs *wpd = (WaifPropdefs*)o->waif_propdefs;
 	int i;
 
 	/* If the old AND new names are both waif properties just rename
@@ -232,13 +232,13 @@ new_waif(Objid waifclass, Objid owner)
 	if (!classp)
 		panic("new_waif() called with invalid class");
 
-	res.type = TYPE_WAIF;
+	res.type = (var_type)TYPE_WAIF;
 	res.v.waif = (Waif *) mymalloc(sizeof(Waif), M_WAIF);
 	res.v.waif->waifclass = waifclass;
 	res.v.waif->owner = owner;
 	if (!classp->waif_propdefs)
 		gen_waif_propdefs(classp);
-	res.v.waif->propdefs = ref_waif_propdefs(classp->waif_propdefs);
+	res.v.waif->propdefs = ref_waif_propdefs((WaifPropdefs*)classp->waif_propdefs);
 	for (i = 0; i < WAIF_MAPSZ; ++i)
 		res.v.waif->map[i] = 0;
 	res.v.waif->propvals = alloc_waif_propvals(res.v.waif, 1);
@@ -386,7 +386,7 @@ update_waif_propdefs(Waif *waif)
 	}
 
 	old = waif->propdefs;
-	waif->propdefs = ref_waif_propdefs(classp->waif_propdefs);
+	waif->propdefs = ref_waif_propdefs((WaifPropdefs*)classp->waif_propdefs);
 
 	/* If the waif is totally undifferentiated, there's no need for
 	 * any remapping, is there?
@@ -716,7 +716,7 @@ waif_put_prop(Waif *w, const char *name, Var val, Objid progr)
 	{
 		Var me;
 
-		me.type = TYPE_WAIF;
+		me.type = (var_type)TYPE_WAIF;
 		me.v.waif = w;
 		if (refers_to(val, me))
 			return E_RECMOVE;
@@ -877,7 +877,7 @@ read_waif()
 		if (!w)
 			panic("waif ref to unsaved waif!");
 
-		res.type = TYPE_WAIF;
+		res.type = (var_type)TYPE_WAIF;
 		res.v.waif = w;
 		return var_ref(res);
 	}
@@ -904,7 +904,7 @@ read_waif()
 	/* I'd like to use new_waif() here but this is so hacked up it
 	 * seemed silly to try and overload new_waif() to do it.
 	 */
-	res.type = TYPE_WAIF;
+	res.type = (var_type)TYPE_WAIF;
 	res.v.waif = (Waif *) mymalloc(sizeof(Waif), M_WAIF);
 	saved_waifs[waif_count++] = w = res.v.waif;
 	res.v.waif->propdefs = NULL;
@@ -978,7 +978,7 @@ waif_after_loading()
 		}
 		if (!o->waif_propdefs)
 			gen_waif_propdefs(o);
-		w->propdefs = ref_waif_propdefs(o->waif_propdefs);
+		w->propdefs = ref_waif_propdefs((WaifPropdefs*)o->waif_propdefs);
 	}
 	myfree(saved_waifs, M_WAIF_XTRA);
 }

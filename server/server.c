@@ -1,4 +1,5 @@
 #include <sys/types.h>		/* must be first on some systems */
+#include <inttypes.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -265,11 +266,8 @@ child_completed_signal(int sig)
 {
     int status;
 
-    /* (Void *) casts to avoid warnings on systems that mis-declare the
-     * argument type.
-     */
 #if HAVE_WAITPID
-    while (waitpid(-1, (void *) &status, WNOHANG) > 0);
+    while (waitpid(-1, &status, WNOHANG) > 0);
 #else
 #if HAVE_WAIT3
     while (wait3((void *) &status, WNOHANG, 0) >= 0);
@@ -658,7 +656,7 @@ emergency_mode()
 	    Program *program;
 	    Var str;
 
-	    str.type = TYPE_STR;
+	    str.type = (var_type)TYPE_STR;
 	    code = new_list(0);
 
 	    if (*++line == ';')
@@ -744,7 +742,7 @@ emergency_mode()
 		    Program *program;
 
 		    code = new_list(0);
-		    str.type = TYPE_STR;
+		    str.type = (var_type)TYPE_STR;
 
 		    while (strcmp(line = read_stdin_line(), ".")) {
 			str.v.str = str_dup(line);
@@ -922,7 +920,7 @@ static Objid next_unconnected_player = NOTHING - 1;
 server_handle
 server_new_connection(server_listener sl, network_handle nh, int outbound)
 {
-    slistener *l = sl.ptr;
+    slistener *l = (slistener *)sl.ptr;
     shandle *h = (shandle *) mymalloc(sizeof(shandle), M_NETWORK);
     server_handle result;
 
@@ -965,7 +963,7 @@ server_new_connection(server_listener sl, network_handle nh, int outbound)
 void
 server_refuse_connection(server_listener sl, network_handle nh)
 {
-    slistener *l = sl.ptr;
+    slistener *l = (slistener *)sl.ptr;
 
     if (l->print_messages)
 	send_message(l->oid, nh, "server_full_msg",
@@ -1153,7 +1151,7 @@ read_active_connections(void)
 	    listener = SYSTEM_OBJECT;
 	}
 	checkpointed_connections.v.list[i] = v = new_list(2);
-	v.v.list[1].type = v.v.list[2].type = TYPE_OBJ;
+	v.v.list[1].type = v.v.list[2].type = (var_type)TYPE_OBJ;
 	v.v.list[1].v.obj = who;
 	v.v.list[2].v.obj = listener;
     }
@@ -1263,7 +1261,7 @@ static package
 bf_server_version(Var arglist, Byte next, void *vdata, Objid progr)
 {
     Var r;
-    r.type = TYPE_STR;
+    r.type = (var_type)TYPE_STR;
     r.v.str = str_dup(server_version);
     free_var(arglist);
     return make_var_pack(r);
@@ -1281,7 +1279,7 @@ bf_renumber(Var arglist, Byte next, void *vdata, Objid progr)
     else if (!is_wizard(progr))
 	return make_error_pack(E_PERM);
 
-    r.type = TYPE_OBJ;
+    r.type = (var_type)TYPE_OBJ;
     r.v.obj = db_renumber_object(o);
     return make_var_pack(r);
 }
@@ -1350,7 +1348,7 @@ bf_db_disk_size(Var arglist, Byte next, void *vdata, Objid progr)
     Var v;
 
     free_var(arglist);
-    v.type = TYPE_INT;
+    v.type = (var_type)TYPE_INT;
     if ((v.v.num = db_disk_size()) < 0)
 	return make_raise_pack(E_QUOTA, "No database file(s) available", zero);
     else
@@ -1416,10 +1414,10 @@ bf_open_network_connection(Var arglist, Byte next, void *vdata, Objid progr)
 	 * player number was allocated for the connection.  Thus, the old
 	 * value of next_unconnected_player is the number of our connection.
 	 */
-	r.type = TYPE_OBJ;
+	r.type = (var_type)TYPE_OBJ;
 	r.v.obj = next_unconnected_player + 1;
     } else {
-	r.type = TYPE_ERR;
+	r.type = (var_type)TYPE_ERR;
 	r.v.err = e;
     }
     if (r.type == TYPE_ERR)
@@ -1457,7 +1455,7 @@ bf_connected_players(Var arglist, Byte next, void *vdata, Objid progr)
     for (h = all_shandles; h; h = h->next) {
 	if ((show_all || h->connection_time != 0) && !h->disconnect_me) {
 	    count++;
-	    result.v.list[count].type = TYPE_OBJ;
+	    result.v.list[count].type = (var_type)TYPE_OBJ;
 	    result.v.list[count].v.obj = h->player;
 	}
     }
@@ -1471,7 +1469,7 @@ bf_connected_seconds(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     shandle *h = find_shandle(arglist.v.list[1].v.obj);
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     if (h && h->connection_time != 0 && !h->disconnect_me)
 	r.v.num = time(0) - h->connection_time;
     else
@@ -1489,7 +1487,7 @@ bf_idle_seconds(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
     shandle *h = find_shandle(arglist.v.list[1].v.obj);
 
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     if (h && !h->disconnect_me)
 	r.v.num = time(0) - h->last_activity_time;
     else
@@ -1520,7 +1518,7 @@ bf_connection_name(Var arglist, Byte next, void *vdata, Objid progr)
     else if (!conn_name)
 	return make_error_pack(E_INVARG);
     else {
-	r.type = TYPE_STR;
+	r.type = (var_type)TYPE_STR;
 	r.v.str = str_dup(conn_name);
 	return make_var_pack(r);
     }
@@ -1541,7 +1539,7 @@ bf_notify(Var arglist, Byte next, void *vdata, Objid progr)
 	free_var(arglist);
 	return make_error_pack(E_PERM);
     }
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     if (h && !h->disconnect_me) {
 	if (h->binary) {
 	    int length;
@@ -1705,10 +1703,10 @@ bf_listeners(Var arglist, Byte next, void *vdata, Objid progr)
     list = new_list(count);
     for (i = 1, l = all_slisteners; l; i++, l = l->next) {
 	list.v.list[i] = entry = new_list(3);
-	entry.v.list[1].type = TYPE_OBJ;
+	entry.v.list[1].type = (var_type)TYPE_OBJ;
 	entry.v.list[1].v.obj = l->oid;
 	entry.v.list[2] = var_ref(l->desc);
-	entry.v.list[3].type = TYPE_INT;
+	entry.v.list[3].type = (var_type)TYPE_INT;
 	entry.v.list[3].v.num = l->print_messages;
     }
 
@@ -1723,7 +1721,7 @@ bf_buffered_output_length(Var arglist, Byte next, void *vdata, Objid progr)
     Var r;
 
     free_var(arglist);
-    r.type = TYPE_INT;
+    r.type = (var_type)TYPE_INT;
     if (nargs == 0)
 	r.v.num = MAX_QUEUED_OUTPUT;
     else {

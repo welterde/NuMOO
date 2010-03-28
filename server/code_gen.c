@@ -152,8 +152,7 @@ emit_byte(Byte b, State * state)
 {
     if (state->num_bytes == state->max_bytes) {
 	unsigned new_max = 2 * state->max_bytes;
-	state->bytes = myrealloc(state->bytes, sizeof(Byte) * new_max,
-				 M_BYTECODES);
+	state->bytes = (Byte *)myrealloc(state->bytes, sizeof(Byte) * new_max, M_BYTECODES);
 #ifdef BYTECODE_REDUCE_REF
 	state->pushmap = myrealloc(state->pushmap, sizeof(Byte) * new_max,
 				   M_BYTECODES);
@@ -256,7 +255,7 @@ add_literal(Var v, State * state)
 	    /* intern string if we can */
 	    Var nv;
 
-	    nv.type = TYPE_STR;
+	    nv.type = (var_type)TYPE_STR;
 	    nv.v.str = str_intern(v.v.str);
 	    gstate->literals[i = gstate->num_literals++] = nv;
 	} else {

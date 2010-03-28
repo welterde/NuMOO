@@ -44,7 +44,7 @@ mplex_wait(unsigned timeout)
     tv.tv_sec = timeout / 1000000;
     tv.tv_usec = timeout % 1000000;
 
-    n = select(max_descriptor + 1, (void *) &input, (void *) &output, 0, &tv);
+    n = select(max_descriptor + 1, &input, &output, 0, &tv);
 
     if (n < 0) {
 	if (errno != EINTR)

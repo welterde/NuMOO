@@ -67,7 +67,7 @@ extern enum error call_verb(Objid obj, const char *vname, Var args,
 /* if your vname is already a moo str (via str_dup) then you can
    use this interface instead */
 extern enum error call_verb2(Objid obj, const char *vname, Var args,
-			    Var THIS, int do_pass);
+			    Var THISOBJ, int do_pass);
 
 extern int setup_activ_for_eval(Program * prog);
 
@@ -80,13 +80,13 @@ enum outcome {
 
 extern enum outcome do_forked_task(Program * prog, Var * rt_env,
 				   activation a, int f_id);
-extern enum outcome do_input_task(Objid user, Parsed_Command * pc,
-				  Objid this, db_verb_handle vh);
-extern enum outcome do_server_verb_task(Objid this, const char *verb,
+extern enum outcome do_input_task(Objid user, Parsed_Command * PX,
+				  Objid thisobj, db_verb_handle vh);
+extern enum outcome do_server_verb_task(Objid thisobj, const char *verb,
 					Var args, db_verb_handle h,
 					Objid player, const char *argstr,
 					Var * result, int do_db_tracebacks);
-extern enum outcome do_server_program_task(Objid this, const char *verb,
+extern enum outcome do_server_program_task(Objid thisobj, const char *verb,
 					   Var args, Objid vloc,
 					   const char *verbname,
 					   Program * program, Objid progr,
