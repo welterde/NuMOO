@@ -821,7 +821,7 @@ program_to_tree(Program * prog, int vector, int pc_vector, int pc)
     sum = program->main_vector.max_stack;
     for (i = 0; i < program->fork_vectors_size; i++)
 	sum += program->fork_vectors[i].max_stack;
-    expr_stack = mymalloc(sum * sizeof(Expr *), M_DECOMPILE);
+    expr_stack = (Expr * *)mymalloc(sum * sizeof(Expr *), M_DECOMPILE);
     top_expr_stack = 0;
 
     bc = (vector == MAIN_VECTOR

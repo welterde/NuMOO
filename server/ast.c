@@ -23,7 +23,7 @@ begin_code_allocation()
 {
     pool_size = 10;
     next_pool_slot = 0;
-    pool = mymalloc(pool_size * sizeof(struct entry), M_AST_POOL);
+    pool = (struct entry *)mymalloc(pool_size * sizeof(struct entry), M_AST_POOL);
 }
 
 void
@@ -48,7 +48,7 @@ allocate(int size, Memory_Type type)
 	int i;
 
 	pool_size *= 2;
-	new_pool = mymalloc(pool_size * sizeof(struct entry), M_AST_POOL);
+	new_pool = (struct entry *)mymalloc(pool_size * sizeof(struct entry), M_AST_POOL);
 	for (i = 0; i < next_pool_slot; i++) {
 	    new_pool[i] = pool[i];
 	}

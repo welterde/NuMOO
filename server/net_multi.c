@@ -100,7 +100,7 @@ network_register_fd(int fd, network_fd_callback readable,
 
     if (!reg_fds) {
 	max_reg_fds = 5;
-	reg_fds = mymalloc(max_reg_fds * sizeof(fd_reg), M_NETWORK);
+	reg_fds = (fd_reg *)mymalloc(max_reg_fds * sizeof(fd_reg), M_NETWORK);
 	for (i = 0; i < max_reg_fds; i++)
 	    reg_fds[i].fd = -1;
     }
@@ -110,7 +110,7 @@ network_register_fd(int fd, network_fd_callback readable,
 	    break;
     if (i >= max_reg_fds) {	/* No free slots */
 	int new_max = 2 * max_reg_fds;
-	fd_reg *newbie = mymalloc(new_max * sizeof(fd_reg), M_NETWORK);
+	fd_reg *newbie = (fd_reg *)mymalloc(new_max * sizeof(fd_reg), M_NETWORK);
 
 	for (i = 0; i < new_max; i++)
 	    if (i < max_reg_fds)
@@ -303,7 +303,7 @@ new_nhandle(int rfd, int wfd, const char *local_name, const char *remote_name,
 	|| (rfd != wfd && !network_set_nonblocking(wfd)))
 	log_perror("Setting connection non-blocking");
 
-    h = mymalloc(sizeof(nhandle), M_NETWORK);
+    h = (nhandle *)mymalloc(sizeof(nhandle), M_NETWORK);
 
     if (all_nhandles)
 	all_nhandles->prev = &(h->next);
@@ -456,7 +456,7 @@ enqueue_output(network_handle nh, const char *line, int line_length,
 	if (h->output_head == 0)
 	    h->output_tail = &(h->output_head);
     }
-    buffer = (char *) mymalloc(length * sizeof(char), M_NETWORK);
+    buffer = (char *) (char *)mymalloc(length * sizeof(char), M_NETWORK);
     block = (text_block *) mymalloc(sizeof(text_block), M_NETWORK);
     memcpy(buffer, line, line_length);
     if (add_eol)
@@ -512,7 +512,7 @@ network_make_listener(server_listener sl, Var desc,
     nlistener *l;
 
     if (e == E_NONE) {
-	nl->ptr = l = mymalloc(sizeof(nlistener), M_NETWORK);
+	nl->ptr = l = (nlistener *)mymalloc(sizeof(nlistener), M_NETWORK);
 	l->fd = fd;
 	l->slistener = sl;
 	l->name = str_dup(*name);

@@ -399,6 +399,7 @@ add_line(const char *line, void *data)
 
     if (d->used >= d->max) {
 	int new_max = (d->max == 0 ? 20 : d->max * 2);
+        /* XXX HMM shouldnt this be sizeof(char *)? */
 	char **newbie = mymalloc(sizeof(char **) * new_max, M_DISASSEMBLE);
 	int i;
 

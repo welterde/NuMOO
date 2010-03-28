@@ -47,7 +47,7 @@ mymalloc(unsigned size, Memory_Type type)
     char msg[100];
     int offs;
 
-    if (size == 0)		/* For queasy systems */
+    if (size == 0) /* size 0 won't play nice with offs */
 	size = 1;
 
     offs = refcount_overhead(type);
@@ -59,8 +59,8 @@ mymalloc(unsigned size, Memory_Type type)
     alloc_num[type]++;
 
     if (offs) {
-	memptr += offs;
-	((int *) memptr)[-1] = 1;
+	memptr += offs;           /* actual object starts here */
+	((int *) memptr)[-1] = 1; /* initial refcount = 1 */
 #ifdef MEMO_STRLEN
 	if (type == M_STRING)
 	    ((int *) memptr)[-2] = size - 1;

@@ -38,10 +38,10 @@ new_intern_entry_hunk(int size)
 {
     struct intern_entry_hunk *newbie;
     
-    newbie = mymalloc(sizeof(struct intern_entry_hunk), M_INTERN_HUNK);
+    newbie = (struct intern_entry_hunk *)mymalloc(sizeof(struct intern_entry_hunk), M_INTERN_HUNK);
     newbie->size = size;
     newbie->handout = 0;
-    newbie->contents = mymalloc(sizeof(struct intern_entry) * size, M_INTERN_ENTRY);
+    newbie->contents = (struct intern_entry *)mymalloc(sizeof(struct intern_entry) * size, M_INTERN_ENTRY);
     newbie->next = NULL;
     
     return newbie;
@@ -104,7 +104,7 @@ make_intern_table(int size) {
     struct intern_entry **table;
     int i;
 
-    table = mymalloc(sizeof(struct intern_entry *) * size, M_INTERN_POINTER);
+    table = (struct intern_entry * *)mymalloc(sizeof(struct intern_entry *) * size, M_INTERN_POINTER);
     for (i = 0; i < size; i++) {
         table[i] = NULL;
     }
@@ -176,7 +176,7 @@ add_interned_string(const char *s, unsigned hash)
     int bucket = hash % intern_table_size;
     struct intern_entry *p;
     
-    /* p = mymalloc(sizeof(struct intern_entry), M_INTERN_ENTRY); */
+    /* p = (struct intern_entry *)mymalloc(sizeof(struct intern_entry), M_INTERN_ENTRY); */
     p = allocate_intern_entry();
     p->s = s;
     p->hash = hash;

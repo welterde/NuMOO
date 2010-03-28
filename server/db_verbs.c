@@ -85,7 +85,7 @@ dbpriv_build_prep_table(void)
 	     */
 	    words = parse_into_words(cprep, &nwords);
 
-	    current_alias = mymalloc(sizeof(struct pt_entry), M_PREP);
+	    current_alias = (struct pt_entry *)mymalloc(sizeof(struct pt_entry), M_PREP);
 	    current_alias->nwords = nwords;
 	    current_alias->next = 0;
 	    for (j = 0; j < nwords; j++)
@@ -187,7 +187,7 @@ db_add_verb(Objid oid, const char *vnames, Objid owner, unsigned flags,
 
     db_priv_affected_callable_verb_lookup();
 
-    newv = mymalloc(sizeof(Verbdef), M_VERBDEF);
+    newv = (Verbdef *)mymalloc(sizeof(Verbdef), M_VERBDEF);
     newv->name = vnames;
     newv->owner = owner;
     newv->perms = flags | (dobj << DOBJSHIFT) | (iobj << IOBJSHIFT);
@@ -360,7 +360,7 @@ make_vc_table(int size)
     int i;
 
     vc_size = size;
-    vc_table = mymalloc(size * sizeof(vc_entry *), M_VC_TABLE);
+    vc_table = (vc_entry * *)mymalloc(size * sizeof(vc_entry *), M_VC_TABLE);
     for (i = 0; i < size; i++) {
 	vc_table[i] = NULL;
     }
@@ -496,7 +496,7 @@ db_find_callable_verb(Objid oid, const char *verb)
      * we do "negative caching", keeping track of failed lookups so that
      * repeated failures hit the cache instead of going through a lookup.
      */
-    new_vc = mymalloc(sizeof(vc_entry), M_VC_ENTRY);
+    new_vc = (vc_entry *)mymalloc(sizeof(vc_entry), M_VC_ENTRY);
 
     new_vc->hash = hash;
     new_vc->oid_key = first_parent_with_verbs;

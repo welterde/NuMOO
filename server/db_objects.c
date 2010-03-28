@@ -53,13 +53,13 @@ ensure_new_object(void)
 {
     if (max_objects == 0) {
 	max_objects = 100;
-	objects = mymalloc(max_objects * sizeof(Object *), M_OBJECT_TABLE);
+	objects = (Object * *)mymalloc(max_objects * sizeof(Object *), M_OBJECT_TABLE);
     }
     if (num_objects >= max_objects) {
 	int i;
 	Object **newbie;
 
-	newbie = mymalloc(max_objects * 2 * sizeof(Object *), M_OBJECT_TABLE);
+	newbie = (Object * *)mymalloc(max_objects * 2 * sizeof(Object *), M_OBJECT_TABLE);
 	for (i = 0; i < max_objects; i++)
 	    newbie[i] = objects[i];
 	myfree(objects, M_OBJECT_TABLE);
@@ -74,7 +74,7 @@ dbpriv_new_object(void)
     Object *o;
 
     ensure_new_object();
-    o = objects[num_objects] = mymalloc(sizeof(Object), M_OBJECT);
+    o = objects[num_objects] = (Object *)mymalloc(sizeof(Object), M_OBJECT);
     o->id = num_objects;
     o->waif_propdefs = NULL;
     num_objects++;
